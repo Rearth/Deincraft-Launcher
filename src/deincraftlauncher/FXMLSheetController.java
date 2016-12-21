@@ -61,13 +61,13 @@ public class FXMLSheetController implements Initializable {
         //test.setOnClick(this::onTestClick);
         //System.out.println(test.toString());
         Modpack FTBInfinity = new Modpack("FTBInfinity", "1.0.0", infinityImage, Color.GRAY);
-        PackSelecter.registerModpack(FTBInfinity);
         Modpack Skyfactory = new Modpack("Skyfactory", "2.5.0", skyImage, Color.LIGHTBLUE);
-        PackSelecter.registerModpack(Skyfactory);
         Modpack Vanilla = new Modpack("Vanilla", "1.7.10", vanillaImage, Color.AQUAMARINE);
-        PackSelecter.registerModpack(Vanilla);
         Modpack Deincraft = new Modpack("Deincraft - Tekkit", "1.0.0", DCImage, Color.LIGHTGOLDENRODYELLOW);
+        PackSelecter.registerModpack(Skyfactory);
         PackSelecter.registerModpack(Deincraft);
+        PackSelecter.registerModpack(Vanilla);
+        PackSelecter.registerModpack(FTBInfinity);
         System.out.println("selector bottom end: " + PackSelecter.getBottomEnd());
         
         PackSelecter.addEnds();
