@@ -64,9 +64,9 @@ public class FXMLSheetController implements Initializable {
         PackSelecter.registerModpack(FTBInfinity);
         Modpack Skyfactory = new Modpack("Skyfactory", "2.5.0", skyImage, Color.LIGHTBLUE);
         PackSelecter.registerModpack(Skyfactory);
-        Modpack Vanilla = new Modpack("Vanilla", "1.7.10", vanillaImage, Color.AQUA);
+        Modpack Vanilla = new Modpack("Vanilla", "1.7.10", vanillaImage, Color.AQUAMARINE);
         PackSelecter.registerModpack(Vanilla);
-        Modpack Deincraft = new Modpack("Deincraft - Tekkit", "1.0.0", DCImage, Color.WHITE);
+        Modpack Deincraft = new Modpack("Deincraft - Tekkit", "1.0.0", DCImage, Color.LIGHTGOLDENRODYELLOW);
         PackSelecter.registerModpack(Deincraft);
         System.out.println("selector bottom end: " + PackSelecter.getBottomEnd());
         
@@ -131,7 +131,7 @@ public class FXMLSheetController implements Initializable {
         
         System.out.println("downloading Screenshots");
         
-        String URL = "http://download1359.mediafire.com/93201f9o0brg/0j334whhyyhh2ea/Images.zip";
+        String URL = "https://www.dropbox.com/s/wttaovp3pt4clkn/LauncherImages.zip?dl=1";
         String targetPath = Config.getLauncherFolder();
         DownloadHandler.addItem(targetPath, URL, this::onImgDone);
         DownloadHandler.setTitle("Downloade Screenshots");

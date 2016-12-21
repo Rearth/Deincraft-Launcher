@@ -154,7 +154,7 @@ public class DownloadHandler {
         background = new Rectangle();
         background.setFill(Color.GRAY);
         background.setLayoutX(defaultgap);
-        background.setLayoutY(597 - downloaderHeight + defaultgap);
+        background.setLayoutY(454 - downloaderHeight + defaultgap);
         background.setWidth(pane.getPrefWidth() - defaultgap * 3 - (pane.getPrefWidth() - ModpackSelector.posX));
         background.setHeight(downloaderHeight - defaultgap * 2);
         background.setEffect(getSmallShadow());

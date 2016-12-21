@@ -6,7 +6,6 @@
 package deincraftlauncher.designElements;
 
 import deincraftlauncher.IO.download.DownloadHandler;
-import static deincraftlauncher.IO.download.DownloadHandler.downloaderHeight;
 import static deincraftlauncher.designElements.DesignHelpers.*;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.ModpackSelector;
@@ -21,7 +20,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextAlignment;
 
@@ -34,7 +32,7 @@ public final class ModpackView {
     private static final int galleryX = defaultgap;
     private static final int galleryY = 80;
     private static final int gallerySizeX = 425;
-    private static final int gallerySizeY = 265;
+    private static final int gallerySizeY = 220;
     private static final int infoX = galleryX + gallerySizeX + defaultgap * 2;
     private static final int stateY = 90;
     private static final int playersY = stateY + 25;
@@ -81,7 +79,7 @@ public final class ModpackView {
         title.setLayoutX(0);
         title.setLayoutY(0);
         title.setPrefHeight(galleryY - defaultgap);
-        title.setPrefWidth(ModpackSelector.posX - defaultgap);
+        title.setPrefWidth(ModpackSelector.posX - defaultgap * 2);
         title.setAlignment(Pos.CENTER);
         title.setFont(getTitleFont());
         title.setEffect(DesignHelpers.getShadowEffect(50));

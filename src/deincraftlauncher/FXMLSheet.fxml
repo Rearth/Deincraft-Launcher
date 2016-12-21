@@ -8,4 +8,4 @@
 <?import javafx.scene.layout.*?>
 
 
-<AnchorPane id="AnchorPane" fx:id="mainPanel" prefHeight="597.0" prefWidth="689.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="deincraftlauncher.FXMLSheetController" />
+<AnchorPane id="AnchorPane" fx:id="mainPanel" prefHeight="454.0" prefWidth="644.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="deincraftlauncher.FXMLSheetController" />
