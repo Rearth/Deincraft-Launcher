@@ -164,6 +164,8 @@ public class FXMLSheetController implements Initializable {
     
     private void checkForUpdates() {
         
+        ModpackSelector.getInstance().setStartLoading(true);
+        
         for (Modpack pack : ModpackSelector.getInstance().getPacks()) {
             if (!pack.isWIP()) {
                 System.out.println("Downloading info file for " + pack.getName());
@@ -210,7 +212,7 @@ public class FXMLSheetController implements Initializable {
         Platform.runLater(() -> {
             pack.setNews(NewsB);
             pack.getView().updateInfo();
-            
+            ModpackSelector.getInstance().setStartLoading(false);
         });
         
     }

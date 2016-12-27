@@ -70,7 +70,8 @@ public final class ModpackView {
     private final Rectangle background;
     private final int notesSizeY;
     
-    private ImageView mainView;
+    private ImageView loading;
+    private ImageView loadingb;
     
     private boolean Visible = false;
     
@@ -250,14 +251,14 @@ public final class ModpackView {
     public void enableLoading() {
         gallery.hide();
         
-        mainView = new ImageView();
-        mainView.setLayoutX(galleryX + gallerySizeX * 0.4);
-        mainView.setLayoutY(galleryY + gallerySizeY * 0.4);
-        mainView.setFitWidth(128);
-        mainView.setFitHeight(128);
-        mainView.setImage(new Image(getClass().getResource("/deincraftlauncher/Images/loading.gif").toString()));
-        Nodes.add(mainView);
-        deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(mainView);
+        loading = new ImageView();
+        loading.setLayoutX(galleryX + gallerySizeX * 0.4);
+        loading.setLayoutY(galleryY + gallerySizeY * 0.4);
+        loading.setFitWidth(128);
+        loading.setFitHeight(128);
+        loading.setImage(new Image(getClass().getResource("/deincraftlauncher/Images/loading.gif").toString()));
+        Nodes.add(loading);
+        deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(loading);
         
     }
     
@@ -273,8 +274,8 @@ public final class ModpackView {
             gallery.show();
             Nodes.addAll(gallery.getNodes());
 
-            Nodes.remove(mainView);
-            deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().remove(mainView);
+            Nodes.remove(loading);
+            deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().remove(loading);
         });
         
     }
@@ -297,6 +298,25 @@ public final class ModpackView {
     public void setStartVisible(boolean State) {
         StartTile.setVisible(State);
         StartText.setVisible(State);
+    }
+    
+    public void setStartLoading(boolean state) {
+        
+        setStartVisible(state);
+        
+        if (state) {
+            loadingb = new ImageView();
+            loadingb.setLayoutX(startX);
+            loadingb.setLayoutY(startY);
+            loadingb.setFitWidth(64);
+            loadingb.setFitHeight(64);
+            loadingb.setImage(new Image(getClass().getResource("/deincraftlauncher/Images/loading.gif").toString()));
+            Nodes.add(loadingb);
+            deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(loadingb);
+        } else {
+            Nodes.remove(loadingb);
+            deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().remove(loadingb);            
+        }
     }
     
 }

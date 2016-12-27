@@ -31,15 +31,15 @@ public class Config {
     }
     
     public static String getLauncherFolder() {
-        return instance.DCFolder + File.separator + "Launcher" + File.separator;
+        return instance.DCFolder + "Launcher" + File.separator;
     }
     
     public static String getImagesFolder() {
-        return Config.getLauncherFolder() + File.separator + "Images" + File.separator;
+        return Config.getLauncherFolder() + "Images" + File.separator;
     }
     
     public static String getGameFolder() {
-        return instance.DCFolder + File.separator + "Games" + File.separator;
+        return instance.DCFolder + "Games" + File.separator;
     }
     
 }

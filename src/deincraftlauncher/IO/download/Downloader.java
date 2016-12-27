@@ -169,7 +169,7 @@ public class Downloader {
                         out.write(buf, 0, n);
 
                         progress += 1000;
-                        totalProgress = progress / (totalSize / 1.0368769f);
+                        totalProgress = progress / (totalSize);
                         //System.out.println(totalProgress);
 
                     }

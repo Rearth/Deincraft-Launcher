@@ -11,12 +11,14 @@ import deincraftlauncher.IO.ZIPExtractor;
 import deincraftlauncher.IO.download.DownloadHandler;
 import deincraftlauncher.IO.download.Downloader;
 import deincraftlauncher.designElements.ModpackView;
+import deincraftlauncher.start.StartMinecraft;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
@@ -148,12 +150,12 @@ public class Modpack {
     
     public boolean updateAvaible() {
         
-        /*System.out.println(MainVersion);
+        System.out.println(MainVersion);
         System.out.println(ModsVersion);
         System.out.println(ConfigVersion);
         System.out.println(MainVersionInstalled);
         System.out.println(ModsVersionInstalled);
-        System.out.println(ConfigVersionInstalled);*/
+        System.out.println(ConfigVersionInstalled);
         
         return !(MainVersion.equals(MainVersionInstalled) && ModsVersion.equals(ModsVersionInstalled) && ConfigVersion.equals(ConfigVersionInstalled));
     }
@@ -214,6 +216,8 @@ public class Modpack {
             }
             DownloadHandler.setTitle("Downloade " + Name);
             DownloadHandler.start();
+        } else {
+            startPack();
         }
         
     }
@@ -228,19 +232,30 @@ public class Modpack {
             Logger.getLogger(Modpack.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        if (loader.getTargetFile().toLowerCase().contains("mains")) {
+        if (loader.getTargetFile().toLowerCase().contains("main")) {
             MainVersionInstalled = MainVersion;
         }
         if (loader.getTargetFile().toLowerCase().contains("mods")) {
             ModsVersionInstalled = ModsVersion;
         }
         if (loader.getTargetFile().toLowerCase().contains("config")) {
-            System.out.println("Finished all files for this pack, enabling start button");
             ConfigVersionInstalled = ConfigVersion;
-            view.setStartVisible(true);
-            view.updateInfo();
         }
         
+        saveConfig();
+        
+        if (!updateAvaible()) {
+            System.out.println("Finished all files for this pack, enabling start button");
+            Platform.runLater(() -> {
+                view.updateInfo();
+                view.setStartVisible(true);            
+            });
+        }
+        
+    }
+    
+    private void startPack() {
+        StartMinecraft.start(this);
     }
 
     //<editor-fold defaultstate="collapsed" desc="getter/setter">

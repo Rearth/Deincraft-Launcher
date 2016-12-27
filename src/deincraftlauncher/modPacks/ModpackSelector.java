@@ -143,18 +143,6 @@ public class ModpackSelector {
     private void handleOptionClick(DCTile tileClicked) {
         System.out.println("opening settings");
         
-        String targetPath = Config.getGameFolder() + "\\Test\\";
-        
-        String URL = "https://www.dropbox.com/s/78f0hzjbgrdzivh/appliedenergistics2-rv3-beta-6.jar?dl=1";
-        String URL2 = "https://www.dropbox.com/s/8gauq7n2rast6nf/AdvancedRocketry-0.9.1.jar?dl=1";
-        String URL3 = "https://www.dropbox.com/s/vq21kjez8yi09xj/%5B1.7.10%5D%20SecurityCraft%20v1.8.1.jar?dl=1";
-        String URL4 = "https://www.dropbox.com/s/khivgzwyh7koe0s/1.7.10-HarderOres-15.26.1b.jar?dl=1";
-        
-        DownloadHandler.addItem(targetPath, URL);
-        DownloadHandler.addItem(targetPath, URL2);
-        DownloadHandler.addItem(targetPath, URL3);
-        DownloadHandler.addItem(targetPath, URL4);
-        DownloadHandler.start();
     }
     
     private void handleMinimize(DCTile tileClicked) {
@@ -174,6 +162,12 @@ public class ModpackSelector {
     public void reloadScreenshots() {
         for (Modpack pack : Modpacks) {
             pack.reloadScreenshots();
+        }
+    }
+    
+    public void setStartLoading(boolean state) {
+        for (Modpack pack : Modpacks) {
+            pack.getView().setStartLoading(state);
         }
     }
     
