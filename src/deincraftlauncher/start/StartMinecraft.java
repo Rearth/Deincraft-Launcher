@@ -34,7 +34,9 @@ public class StartMinecraft {
                 System.out.println("trying to start game: ");
                 Runtime runtime = Runtime.getRuntime();
 
-                Process p1 = runtime.exec(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe" + StartArgs.getStartArgs("rearth", 4096, pack.getPath()), null, new File(pack.getPath()));
+                System.out.println(StartArgs.getStartArgs("rearth", 4096, pack.getPath()));
+                
+                Process p1 = runtime.exec(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe" + StartArgs.getStartArgs("rearth", 4096, pack.getPath()));
                 InputStream is = p1.getInputStream();
                 int i = 0;
                 while ((i = is.read()) != -1) {
