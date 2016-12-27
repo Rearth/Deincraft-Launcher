@@ -31,7 +31,7 @@ public class Config {
     }
     
     public static String getLauncherFolder() {
-        return instance.DCFolder + File.separator + "Launcher";
+        return instance.DCFolder + File.separator + "Launcher" + File.separator;
     }
     
     public static String getImagesFolder() {

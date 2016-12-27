@@ -100,15 +100,7 @@ public class InstallController implements Initializable {
         pathLabel.setBackground(new Background(new BackgroundFill(Color.rgb(170, 170, 170), radii, insets)));
         ContinueButton.setBackground(new Background(new BackgroundFill(Color.rgb(190, 190, 200), radii, insets)));
         //ContinueButton.setBackground(new Background(new BackgroundFill(Color.rgb(100, 190, 100), radii, insets))); //Green Version
-        
-        System.out.println("Creating config file...");
-        try {
-            folder.mkdirs();
-            config.createNewFile();
-        } catch (IOException ex) {
-            System.err.println("error creating config file: " + ex);
-        }
-        
+                
         setDefaultPath();
     }
     
@@ -138,6 +130,14 @@ public class InstallController implements Initializable {
             popupMessage("Fehler: Bitte zuerst erst anmelden");
             
         } else {
+            
+            System.out.println("Creating config file...");
+            try {
+                folder.mkdirs();
+                config.createNewFile();
+            } catch (IOException ex) {
+                System.err.println("error creating config file: " + ex);
+            }
             
             folderLauncher = new File(targetPath + "Launcher");
             System.out.println("Launcher: " + folderLauncher);
@@ -216,8 +216,13 @@ public class InstallController implements Initializable {
     void doLogin(ActionEvent event) {
         
         System.out.println("Pressing Login");
+        if (checkName(Usernamefield.getText()) || checkName(Passwordfield.getText())) {
+            popupMessage("Bitte trage einen Namen und ein Passwort ein.");
+            return;
+        }
         System.out.println("Password selected: " + Passwordfield.getText());
         ContinueButton.requestFocus();
+        Username = Usernamefield.getText();
         Password = Passwordfield.getText();
         
         loginButton.setVisible(false);
@@ -229,12 +234,16 @@ public class InstallController implements Initializable {
         
     }
     
+    private boolean checkName(String name) {
+        return name.equals("") || name.equals("Nutzername") || name.contains(" ");
+    }   
+    
     @FXML
     void doRegister(ActionEvent event) {
         System.out.println("Pressing Register");
     }
     
-    void popupMessage(String text) {
+    private void popupMessage(String text) {
         
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -247,7 +256,7 @@ public class InstallController implements Initializable {
         dialog.show();
     }
     
-    void saveConfig() {
+    private void saveConfig() {
         
         String newln = System.getProperty("line.separator");
         String Texts[] = new String[2];
@@ -266,7 +275,7 @@ public class InstallController implements Initializable {
             }
     }
     
-    String getDCFile() {
+    public String getDCFile() {
         try {
             System.out.println("Launcherjar= " + new File(InstallController.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).toString());
             return new File(InstallController.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).toString();

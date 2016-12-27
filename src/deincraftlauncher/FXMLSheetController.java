@@ -5,6 +5,7 @@
  */
 package deincraftlauncher;
 
+import deincraftlauncher.IO.FileUtils;
 import deincraftlauncher.IO.ZIPExtractor;
 import deincraftlauncher.IO.download.DownloadHandler;
 import static deincraftlauncher.IO.download.DownloadHandler.downloaderHeight;
@@ -60,12 +61,16 @@ public class FXMLSheetController implements Initializable {
         //DCTile test = new DCTile(50, 50, file, "Text", mainPanel);
         //test.setOnClick(this::onTestClick);
         //System.out.println(test.toString());
-        Modpack FTBInfinity = new Modpack("FTBInfinity", "1.0.0", infinityImage, Color.GRAY);
-        Modpack Skyfactory = new Modpack("Skyfactory", "2.5.0", skyImage, Color.LIGHTBLUE);
-        Modpack Vanilla = new Modpack("Vanilla", "1.7.10", vanillaImage, Color.AQUAMARINE);
-        Modpack Deincraft = new Modpack("Deincraft - Tekkit", "1.0.0", DCImage, Color.LIGHTGOLDENRODYELLOW);
-        PackSelecter.registerModpack(Skyfactory);
+        Modpack FTBInfinity = new Modpack("FTBInfinity", infinityImage, Color.GRAY);
+        FTBInfinity.setWIP(true);
+        Modpack Skyfactory = new Modpack("Skyfactory", skyImage, Color.LIGHTBLUE);
+        Skyfactory.setWIP(true);
+        Modpack Vanilla = new Modpack("Vanilla", vanillaImage, Color.AQUAMARINE);
+        Vanilla.setWIP(true);
+        Modpack Deincraft = new Modpack("Deincraft - Tekkit", DCImage, Color.LIGHTGOLDENRODYELLOW);
+        Deincraft.setInfoFileLink("https://www.dropbox.com/s/cjb72vmu7xm1f93/deincraft-tekkit.txt?dl=1");
         PackSelecter.registerModpack(Deincraft);
+        PackSelecter.registerModpack(Skyfactory);
         PackSelecter.registerModpack(Vanilla);
         PackSelecter.registerModpack(FTBInfinity);
         System.out.println("selector bottom end: " + PackSelecter.getBottomEnd());
@@ -75,6 +80,8 @@ public class FXMLSheetController implements Initializable {
         Deincraft.select();
         
         downloadScreens();
+        
+        checkForUpdates();
     }   
     
     public void onTestClick() {
@@ -153,6 +160,59 @@ public class FXMLSheetController implements Initializable {
             ModpackSelector.getInstance().reloadScreenshots();
             ModpackSelector.getInstance().selectedPack.getView().disableLoading();
         });
+    }
+    
+    private void checkForUpdates() {
+        
+        for (Modpack pack : ModpackSelector.getInstance().getPacks()) {
+            if (!pack.isWIP()) {
+                System.out.println("Downloading info file for " + pack.getName());
+                Downloader infoFile = new Downloader(pack.getInfoFileLink(), Config.getLauncherFolder());
+                infoFile.start();
+                infoFile.setOnFinished((Downloader loader) -> {
+                    infoDownloaded(loader, pack);
+                });
+            }
+            
+        }
+        
+    }
+    
+    private void infoDownloaded(Downloader loader, final Modpack pack) {
+        
+        System.out.println("Downloaded info for pack " + pack.getName());
+        
+        File info = new File(loader.getTargetFile());
+        
+        ArrayList<String> total = FileUtils.readFile(info);
+        String text = total.get(0);
+        System.out.println("Update Text for " + pack.getName() + ": " + text);
+        String[] texts = text.split(" ");
+        
+        if (texts.length != 6) {
+            System.err.println("Error getting update data for Modpack " + pack.getName() + " length=" + texts.length);
+            return;
+        }
+        
+        pack.setMainVersion(texts[0]);
+        pack.setMainLink(texts[1]);
+        pack.setModsVersion(texts[2]);
+        pack.setModsLink(texts[3]);
+        pack.setConfigVersion(texts[4]);
+        pack.setConfigLink(texts[5]);
+        
+        String News = "Patchnotes: " + System.getProperty("line.separator");
+        for (int i = 1; i < total.size(); i++) {
+            News += total.get(i) + System.getProperty("line.separator");
+        }
+        
+        final String NewsB = News;
+        Platform.runLater(() -> {
+            pack.setNews(NewsB);
+            pack.getView().updateInfo();
+            
+        });
+        
     }
     
 }
