@@ -120,11 +120,13 @@ public class ModpackSelector {
         DCTile exit = new DCTile(ModpackSelector.posX  + 50, defaultgap, 34, exitImg, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
         exit.setBackgroundColor(Color.TRANSPARENT);
         exit.setOnClick(this::handleExit);
+        //exit.setShadow(false);
         
         Image minimizeImg = new Image(getClass().getResource("/deincraftlauncher/Images/minimize.png").toString());
         DCTile minimize = new DCTile(ModpackSelector.posX, defaultgap, 59 - 2 * defaultgap - 7, 59 + 1, minimizeImg, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
         minimize.setBackgroundColor(Color.TRANSPARENT);
         minimize.setOnClick(this::handleMinimize);
+        //minimize.setShadow(false);
         
         Image optImg = new Image(getClass().getResource("/deincraftlauncher/Images/Settings-Tile.png").toString());
         DCTile opt = new DCTile(ModpackSelector.posX, getBottomEnd() + defaultgap, iconSize, 80, optImg, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
@@ -173,6 +175,12 @@ public class ModpackSelector {
         for (Modpack pack : Modpacks) {
             pack.reloadScreenshots();
         }
+    }
+    
+    public ArrayList<Modpack> getPacks() {
+        
+        return Modpacks;
+        
     }
     
 }

@@ -64,7 +64,14 @@ public class DesignHelpers {
     
     public static Font getLabelFont() {
         return Font.font("Roboto", FontWeight.BOLD,  14);
-        
+    }
+    
+    public static  Font getFocusFont() {
+        return new DesignHelpers().getFocusFontHere();
+    }
+    
+    private Font getFocusFontHere() {
+        return Font.loadFont(getClass().getResource("/deincraftlauncher/Images/Minecrafter.ttf").toString(), 24);
     }
     
     public static void playFadeAnim(Node node, boolean hide) {

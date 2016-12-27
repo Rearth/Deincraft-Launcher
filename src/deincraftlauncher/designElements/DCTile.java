@@ -223,6 +223,7 @@ public class DCTile {
     public void setVisible(boolean state) {
         imageLabel.setVisible(state);
         textLabel.setVisible(state);
+        background.setVisible(state);
     }
     
     public void setTextOnTop() {
@@ -242,7 +243,7 @@ public class DCTile {
     
     private boolean AnimPlaying = false;
     
-    private void handleHover(boolean entered, MouseEvent e) {
+    public void handleHover(boolean entered, MouseEvent e) {
         
         //System.out.println("tile:" + entered);
         
@@ -408,4 +409,22 @@ public class DCTile {
         this.Name = Name;
     }
 
+    public void setShadow(boolean state) {
+        if (state) {
+            background.setEffect(DesignHelpers.getShadowEffect());
+        } else {
+            System.out.println("removing shadow");
+            background.setEffect(DesignHelpers.getShadowEffect(0));
+        }
+    }
+    
+    public ArrayList<Node> getNodes() {
+        ArrayList<Node> Nodes = new ArrayList<>();
+        Nodes.add(imageLabel);
+        Nodes.add(textLabel);
+        Nodes.add(background);
+        
+        return Nodes;
+    }
+    
 }

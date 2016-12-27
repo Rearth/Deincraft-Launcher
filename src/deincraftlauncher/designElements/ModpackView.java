@@ -17,9 +17,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.TextAlignment;
 
@@ -39,6 +41,10 @@ public final class ModpackView {
     private static final int notesX = defaultgap;
     private static final int notesY = galleryY + gallerySizeY + defaultgap;
     private static final int versionY = playersY + 25;
+    private static final int startSizeX = ModpackSelector.posX - galleryX - gallerySizeX - defaultgap * 5;
+    private static final int startSizeY = 100;
+    private static final int startX = infoX;
+    private static final int startY = galleryY + gallerySizeY - startSizeY - defaultgap + 25;
     private static final int notesSizeX = ModpackSelector.posX - defaultgap * 3;
     private static final int radius = 0;
     private static final Insets insets =  new Insets(0, 0, 0, 0);
@@ -50,6 +56,8 @@ public final class ModpackView {
     private final Modpack pack;
     private final ArrayList<Node> Nodes = new ArrayList<>();
     private Gallery gallery;
+    private final DCTile StartTile;
+    private final Label StartText;
     private final Label title;
     private final Label playersInfo;
     private final Label version;
@@ -178,6 +186,35 @@ public final class ModpackView {
         Nodes.add(patchNotes);
         deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(patchNotes);
         
+        StartText = new Label();
+        StartText.setLayoutX(infoX);
+        StartText.setLayoutY(startY);
+        StartText.setPrefWidth(startSizeX);
+        StartText.setPrefHeight(startSizeY - 25);
+        StartText.setTextAlignment(TextAlignment.CENTER);
+        StartText.setAlignment(Pos.CENTER);
+        StartText.setFont(getFocusFont());
+        StartText.setText("Start");
+        Nodes.add(StartText);
+        if (pack.updateAvaible()) {
+            StartText.setText("Update");
+        }
+        
+        Image imgStart = new Image(getClass().getResource("/deincraftlauncher/Images/start.png").toString());
+        
+        StartTile = new DCTile(startX, startY, startSizeX, startSizeY, imgStart, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
+        StartTile.setBackgroundColor(Color.TRANSPARENT);
+        deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(StartText);
+        StartText.setOnMouseEntered((MouseEvent e) -> {
+                StartTile.handleHover(true, e);
+        });
+        StartText.setOnMouseExited((MouseEvent e) -> {
+                StartTile.handleHover(false, e);
+        });
+        Nodes.addAll(StartTile.getNodes());
+        StartText.setOnMouseClicked((MouseEvent e) -> {
+                startClicked();
+        });
         this.setVisible(false);
     }
 
@@ -240,6 +277,26 @@ public final class ModpackView {
             deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().remove(mainView);
         });
         
+    }
+    
+    public void updateInfo() {
+        patchNotes.setText(pack.getNews());
+        versionR.setText(pack.getMainVersionInstalled());
+        if (pack.updateAvaible()) {
+            StartText.setText("Update");
+        } else {
+            StartText.setText("Start");
+        }
+        pack.saveConfig();
+    }
+    
+    private void startClicked() {
+        pack.handleStart();
+    }
+    
+    public void setStartVisible(boolean State) {
+        StartTile.setVisible(State);
+        StartText.setVisible(State);
     }
     
 }
