@@ -302,7 +302,7 @@ public final class ModpackView {
     
     public void setStartLoading(boolean state) {
         
-        setStartVisible(state);
+        setStartVisible(!state);
         
         if (state) {
             loadingb = new ImageView();
