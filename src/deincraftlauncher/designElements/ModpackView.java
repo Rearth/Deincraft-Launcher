@@ -253,7 +253,7 @@ public final class ModpackView {
         
         loading = new ImageView();
         loading.setLayoutX(galleryX + gallerySizeX * 0.4);
-        loading.setLayoutY(galleryY + gallerySizeY * 0.4);
+        loading.setLayoutY(galleryY + gallerySizeY * 0.1);
         loading.setFitWidth(128);
         loading.setFitHeight(128);
         loading.setImage(new Image(getClass().getResource("/deincraftlauncher/Images/loading.gif").toString()));
@@ -300,13 +300,31 @@ public final class ModpackView {
         StartText.setVisible(State);
     }
     
+    public void setStartLocked(String Text) {
+        StartText.setText(Text);
+        if (Text.length() > 5) {
+            StartText.setFont(DesignHelpers.getFocusFont(14));
+        }
+        StartTile.setFocused(false);
+        StartTile.setFocusable(false);
+        StartTile.setImage(new Image(getClass().getResource("/deincraftlauncher/Images/start_locked.png").toString()));
+    }
+    
+    public void setStartUnLocked(String Text) {
+        
+        StartText.setFont(DesignHelpers.getFocusFont());
+        StartText.setText(Text);
+        StartTile.setFocusable(true);
+        StartTile.setImage(new Image(getClass().getResource("/deincraftlauncher/Images/start.png").toString()));
+    }
+    
     public void setStartLoading(boolean state) {
         
         setStartVisible(!state);
         
         if (state) {
             loadingb = new ImageView();
-            loadingb.setLayoutX(startX);
+            loadingb.setLayoutX(startX + 20);
             loadingb.setLayoutY(startY);
             loadingb.setFitWidth(64);
             loadingb.setFitHeight(64);

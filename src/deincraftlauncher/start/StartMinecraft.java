@@ -36,7 +36,7 @@ public class StartMinecraft {
 
             //.setMinecraftVersion("1.7.10") //Set vanilla version
             //OR
-            .setForgeVersion("1.7.10", "1.7.10-10.13.4.1558-1.7.10") //Minecraftforge version
+            .setForgeVersion("1.7.10", pack.getForgeVersion()) //Minecraftforge version
 
             .setInstanceDir(pack.getPath()) //Minecraft directory
 

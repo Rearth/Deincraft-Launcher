@@ -70,8 +70,16 @@ public class DesignHelpers {
         return new DesignHelpers().getFocusFontHere();
     }
     
+    public static  Font getFocusFont(int size) {
+        return new DesignHelpers().getFocusFontHere(size);
+    }
+    
     private Font getFocusFontHere() {
         return Font.loadFont(getClass().getResource("/deincraftlauncher/Images/Minecrafter.ttf").toString(), 24);
+    }
+    
+    private Font getFocusFontHere(int size) {
+        return Font.loadFont(getClass().getResource("/deincraftlauncher/Images/Minecrafter.ttf").toString(), size);
     }
     
     public static void playFadeAnim(Node node, boolean hide) {

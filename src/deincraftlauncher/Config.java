@@ -5,10 +5,12 @@
  */
 package deincraftlauncher;
 
-import deincraftlauncher.IO.FileUtils;
+import deincraftlauncher.IO.ZIPExtractor;
 import deincraftlauncher.IO.download.DownloadHandler;
-import deincraftlauncher.modPacks.ModpackSelector;
+import deincraftlauncher.IO.download.Downloader;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,14 +18,12 @@ import java.io.File;
  */
 public class Config {
     
-    private static final String libLink = "";
+    private static final String libLink = "https://www.dropbox.com/s/b2cbdpgo4249vq4/General-Cache.zip?dl=1";
     
     public String DCFolder;
     public String Username;
     public String Password;
     
-    private String libVersion = "0.0.0";
-    private String libVersionInstalled = "0.0.0";
     
     private Config() {};
     
@@ -51,54 +51,33 @@ public class Config {
     }
     
     public static String getCacheFolder() {
-        File test = new File(getGameFolder() + "Cache" + File.separator);
-        if (!test.exists()) {
-            test.mkdirs();
-        }
+        
         return getGameFolder() + "Cache" + File.separator;
-    }
-    
-    private String getLibFile() {
-        return getLauncherFolder() + "libData";
-    }
-
-    public String getLibVersion() {
-        return libVersion;
-    }
-
-    public void setLibVersion(String libVersion) {
-        this.libVersion = libVersion;
-    }
-
-    public String getLibVersionInstalled() {
-        return libVersionInstalled;
-    }
-
-    public void setLibVersionInstalled(String libVersionInstalled) {
-        this.libVersionInstalled = libVersionInstalled;
     }
     
     public void updateLib() {
         
-        libVersionInstalled = readInstalledVersion();
-        if (libVersionInstalled == null || libVersionInstalled.equals("")) {
-            FileUtils.WriteFile(new File(getLibFile()), "0.0.0");
-            updateLibNow();
-        }
-        if (!libVersionInstalled.equals(libVersion)) {
-            updateLibNow();
+        System.out.println("checking lib update!");
+        
+        File test = new File(getCacheFolder());
+        if (!test.exists()) {
+            System.out.println("Libs not downloaded!");
+            test.mkdirs();
+            DownloadHandler.addItem(getCacheFolder(), libLink, this::onFinished);
+            DownloadHandler.start();
+            DownloadHandler.setTitle("Downloading Assets");
+        } else {
+            System.out.print("cache folder already existing");
         }
         
     }
     
-    private void updateLibNow() {
-        
-        DownloadHandler.addItem(getCacheFolder(), libLink);
-        
-    }
-    
-    private String readInstalledVersion() {
-        return FileUtils.readFile(new File(getLibFile())).get(0);
+    private void onFinished(Downloader loader) {
+        try {
+            ZIPExtractor.extractArchive(loader.getTargetFile(), getCacheFolder());
+        } catch (Exception ex) {
+            Logger.getLogger(Config.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }

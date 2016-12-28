@@ -41,6 +41,7 @@ public class Modpack {
     private boolean updated = false;
     private boolean serverOnline = true;
     private boolean WIP = false;
+    private String forgeVersion;
     
     //Server loaded things
     private String InfoFileLink;
@@ -203,7 +204,7 @@ public class Modpack {
         System.out.println("Handling Start action for pack " + Name + " Update: " + updateAvaible());
         
         if (updateAvaible()) {
-            view.setStartVisible(false);
+            view.setStartLocked("Downloade...");
             System.out.println("Downloading update");
             if (!MainVersion.equals(MainVersionInstalled)) {
                 DownloadHandler.addItem(path, MainLink, this::onDownloaderFinish);
@@ -248,14 +249,24 @@ public class Modpack {
             System.out.println("Finished all files for this pack, enabling start button");
             Platform.runLater(() -> {
                 view.updateInfo();
-                view.setStartVisible(true);            
+                view.setStartUnLocked("Start");      
             });
         }
         
     }
     
     private void startPack() {
-        StartMinecraft.start(this);
+        
+        final Modpack thispack = this;
+        
+        Thread thread = new Thread(){
+            public void run(){
+                System.out.println("Minecraft start thread running");
+                StartMinecraft.start(thispack);
+            }
+        };
+
+        thread.start();
     }
 
     //<editor-fold defaultstate="collapsed" desc="getter/setter">
@@ -281,6 +292,12 @@ public class Modpack {
     }
     
     public String getPath() {
+        
+        File pathF = new File(path);
+        if (!pathF.exists()) {
+            pathF.mkdirs();
+        }
+        
         return path;
     }
     
@@ -396,6 +413,14 @@ public class Modpack {
         this.MainVersionInstalled = MainVersionInstalled;
     }
     
+    public String getForgeVersion() {
+        return forgeVersion;
+    }
+
+    public void setForgeVersion(String forgeVersion) {
+        this.forgeVersion = forgeVersion;
+    }
     
     //</editor-fold>
+
 }

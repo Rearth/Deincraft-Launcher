@@ -55,6 +55,7 @@ public class DCTile {
     private boolean focused = false;    
     private Color backgroundColor = Color.WHITE;
     private String Name = "";
+    private boolean focusable = true;
     
     public DCTile(int posX, int posY, int width, int height, Image imagefile, String Text, Pane pane) {
         this.posX = posX;
@@ -264,6 +265,10 @@ public class DCTile {
             focused = false;
         }*/
         
+        if (!focusable) {
+            return;
+        }
+        
         if (entered) {
             startTimer();
             focusAnim(1.0, scaleTo, 120);
@@ -425,6 +430,14 @@ public class DCTile {
         Nodes.add(background);
         
         return Nodes;
+    }
+
+    public boolean isFocusable() {
+        return focusable;
+    }
+
+    public void setFocusable(boolean focusable) {
+        this.focusable = focusable;
     }
     
 }
