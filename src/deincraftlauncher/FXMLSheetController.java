@@ -67,7 +67,7 @@ public class FXMLSheetController implements Initializable {
         Skyfactory.setWIP(true);
         Modpack Vanilla = new Modpack("Vanilla", vanillaImage, Color.AQUAMARINE);
         Vanilla.setWIP(true);
-        Modpack Deincraft = new Modpack("Deincraft - Tekkit", DCImage, Color.LIGHTGOLDENRODYELLOW);
+        Modpack Deincraft = new Modpack("Deincraft-Tekkit", DCImage, Color.LIGHTGOLDENRODYELLOW);
         Deincraft.setInfoFileLink("https://www.dropbox.com/s/cjb72vmu7xm1f93/deincraft-tekkit.txt?dl=1");
         PackSelecter.registerModpack(Deincraft);
         PackSelecter.registerModpack(Skyfactory);
@@ -191,17 +191,18 @@ public class FXMLSheetController implements Initializable {
         System.out.println("Update Text for " + pack.getName() + ": " + text);
         String[] texts = text.split(" ");
         
-        if (texts.length != 6) {
+        if (texts.length != 7) {
             System.err.println("Error getting update data for Modpack " + pack.getName() + " length=" + texts.length);
             return;
         }
         
-        pack.setMainVersion(texts[0]);
-        pack.setMainLink(texts[1]);
-        pack.setModsVersion(texts[2]);
-        pack.setModsLink(texts[3]);
-        pack.setConfigVersion(texts[4]);
-        pack.setConfigLink(texts[5]);
+        Config.config().setLibVersion(texts[0]);
+        pack.setMainVersion(texts[1]);
+        pack.setMainLink(texts[2]);
+        pack.setModsVersion(texts[3]);
+        pack.setModsLink(texts[4]);
+        pack.setConfigVersion(texts[5]);
+        pack.setConfigLink(texts[6]);
         
         String News = "Patchnotes: " + System.getProperty("line.separator");
         for (int i = 1; i < total.size(); i++) {
