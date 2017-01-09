@@ -102,6 +102,7 @@ public class InstallController implements Initializable {
         //ContinueButton.setBackground(new Background(new BackgroundFill(Color.rgb(100, 190, 100), radii, insets))); //Green Version
                 
         setDefaultPath();
+        System.out.println("starting done");
     }
     
     @FXML

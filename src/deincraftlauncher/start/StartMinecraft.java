@@ -7,6 +7,7 @@ package deincraftlauncher.start;
 
 import deincraftlauncher.Config;
 import deincraftlauncher.modPacks.Modpack;
+import deincraftlauncher.modPacks.ModpackSelector;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import uk.co.rx14.jmclaunchlib.LaunchSpec;
 import uk.co.rx14.jmclaunchlib.LaunchTask;
 import uk.co.rx14.jmclaunchlib.LaunchTaskBuilder;
@@ -63,6 +65,18 @@ public class StartMinecraft {
             try {
                     while ((line = stdout.readLine()) != null) {
                             System.out.println(line);
+                            if (line.contains("Completed early MinecraftForge initialization")) {
+                                Platform.runLater(() -> {
+                                    System.out.println("minecraft starting, enabling start button");
+                                    pack.getView().setStartLoading(false);
+                                    pack.getView().setStartLocked("started");
+                                });
+                            } else if (line.contains("[Client thread/INFO]: Stopping!")) {
+                                Platform.runLater(() -> {
+                                    System.out.println("minecraft stopped");
+                                    pack.getView().setStartUnLocked("Start");
+                                });
+                            }
                     }
             } catch (IOException e) {
                     e.printStackTrace();

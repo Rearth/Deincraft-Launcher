@@ -259,7 +259,10 @@ public class Modpack {
         
         final Modpack thispack = this;
         
+        view.setStartLoading(true);
+        
         Thread thread = new Thread(){
+            @Override
             public void run(){
                 System.out.println("Minecraft start thread running");
                 StartMinecraft.start(thispack);
@@ -281,6 +284,9 @@ public class Modpack {
     
     public void setWIP(boolean WIP) {
         this.WIP = WIP;
+        if (WIP) {
+            view.setWIP();
+        }
     }
     
     public String getInfoFileLink() {

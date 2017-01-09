@@ -85,6 +85,8 @@ public class FXMLSheetController implements Initializable {
         checkForUpdates();
         Config.config().updateLib();
         
+        System.out.println("starting done");
+        
     }   
     
     public void onTestClick() {

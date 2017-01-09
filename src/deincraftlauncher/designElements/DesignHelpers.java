@@ -5,13 +5,21 @@
  */
 package deincraftlauncher.designElements;
 
+import deincraftlauncher.IO.download.DownloadHandler;
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 /**
@@ -95,6 +103,21 @@ public class DesignHelpers {
         ft.setCycleCount(1);
         ft.setAutoReverse(true);
         ft.play();
+    }
+    
+    public static void popupMessage(String Text) {
+        Platform.runLater(() -> {
+            Stage dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.initStyle(StageStyle.UTILITY);
+            dialog.initOwner(deincraftlauncher.DeincraftLauncherUI.window);
+            VBox dialogVbox = new VBox(20);
+            dialogVbox.getChildren().add(new Text(Text));
+            Scene dialogScene = new Scene(dialogVbox, 300, 40);
+            dialog.setScene(dialogScene);
+            dialog.show();               
+        });
+        
     }
             
     

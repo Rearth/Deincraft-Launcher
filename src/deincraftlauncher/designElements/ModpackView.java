@@ -23,6 +23,8 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 
 /**
@@ -292,6 +294,10 @@ public final class ModpackView {
     }
     
     private void startClicked() {
+        if (!StartTile.isFocusable()) {
+            System.out.println("pressed locked start");
+            return;
+        }
         pack.handleStart();
     }
     
@@ -332,9 +338,32 @@ public final class ModpackView {
             Nodes.add(loadingb);
             deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(loadingb);
         } else {
+            System.out.println("removing start loading icon");
             Nodes.remove(loadingb);
             deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().remove(loadingb);            
         }
+    }
+    
+    public void setWIP() {
+        
+        Rectangle gray = new Rectangle();
+        gray.setFill(Color.rgb(30, 30, 30, 0.8));
+        gray.setLayoutX(0);
+        gray.setLayoutY(0);
+        gray.setWidth(ModpackSelector.posX);
+        gray.setHeight(deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getPrefHeight());
+        Nodes.add(gray);
+        deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(gray);
+        
+        Label titleWIP = new Label();
+        titleWIP.setText("Coming soon");
+        titleWIP.setFont(Font.font("Verdana", FontWeight.BOLD, 72));
+        titleWIP.setTextFill(Color.ALICEBLUE);
+        titleWIP.setPrefWidth(ModpackSelector.posX);
+        titleWIP.setPrefHeight(deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getPrefHeight());
+        titleWIP.setAlignment(Pos.CENTER);
+        titleWIP.setTextAlignment(TextAlignment.CENTER);
+        deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(titleWIP);
     }
     
 }

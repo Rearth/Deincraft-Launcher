@@ -50,6 +50,7 @@ public class DownloadHandler {
     private static int doneNum = 0;
     private static boolean visible = false;
     private static boolean active = false;
+    private static boolean blocked = false;
     
     public static DownloadHandler getInstance() {
         return instance;
@@ -67,7 +68,17 @@ public class DownloadHandler {
         instance.addItemP(targetPath, Link, func);
     }
     
+    public static void setBlocked(boolean isblocked) {
+        System.out.println("downloader blocked=" + isblocked);
+        blocked = isblocked;
+    }
+    
     private void addItemP(String targetPath, String Link) {
+        
+        if (blocked) {
+            System.out.println("blocking download begin");
+            return;
+        }
         
         Downloader elem = new Downloader(Link, targetPath);
         System.out.println("download");
@@ -79,6 +90,11 @@ public class DownloadHandler {
     }
     
     private void addItemP(String targetPath, String Link, Function func) {
+        
+        if (blocked) {
+            System.out.println("blocking download begin");
+            return;
+        }
         
         Downloader elem = new Downloader(Link, targetPath);
         System.out.println("download");

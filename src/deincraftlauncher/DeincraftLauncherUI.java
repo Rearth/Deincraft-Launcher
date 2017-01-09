@@ -23,6 +23,9 @@ public class DeincraftLauncherUI extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
+        
+        System.out.println("starting DC Launcher");
+        
         Parent root;
         if (FirstTime()) {
             root = FXMLLoader.load(getClass().getResource("FXMLInstall.fxml"));
