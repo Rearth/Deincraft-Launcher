@@ -5,8 +5,12 @@
  */
 package deincraftlauncher;
 
+import deincraftlauncher.modPacks.settings;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -17,6 +21,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -140,6 +145,11 @@ public class InstallController implements Initializable {
                 System.err.println("error creating config file: " + ex);
             }
             
+            settings.setPassword(Password);
+            settings.setUsername(Username);
+            settings.setRAM(getDefaultRam());
+            settings.save();
+            
             folderLauncher = new File(targetPath + "Launcher");
             System.out.println("Launcher: " + folderLauncher);
             folderLauncher.mkdirs();
@@ -160,6 +170,15 @@ public class InstallController implements Initializable {
             String command = "java -jar " + jarFile;
             try {
                 Process p = Runtime.getRuntime().exec ("cmd /C " + command);
+                BufferedReader stdout = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String line = null;
+                try {
+                        while ((line = stdout.readLine()) != null) {
+                                System.out.println(line);
+                        }
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
             } catch (IOException ex) {
                 Logger.getLogger(InstallController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -168,7 +187,8 @@ public class InstallController implements Initializable {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    System.exit(0);
+                    System.err.println("installer stayed active for debug purposes");
+                    //System.exit(0);
                 }
             }, 200);
             
@@ -284,6 +304,24 @@ public class InstallController implements Initializable {
             Logger.getLogger(InstallController.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
+    }
+    
+    private int getDefaultRam() {
+        int RAM;
+        long memorySize = ((com.sun.management.OperatingSystemMXBean) 
+        ManagementFactory.getOperatingSystemMXBean()).getTotalPhysicalMemorySize();
+        long RAMinMB = memorySize / 1024 /1024; 
+        if (RAMinMB >= 8000) {
+            RAM = 4096;
+        } else if (RAMinMB >= 6000) {
+            RAM = 2572;
+        } else if (RAMinMB >= 4000) {
+            RAM = 2048;
+        } else {
+            RAM = 1536;
+        }
+        
+        return RAM;
     }
     
 }
