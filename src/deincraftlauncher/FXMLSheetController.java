@@ -8,10 +8,10 @@ package deincraftlauncher;
 import deincraftlauncher.IO.FileUtils;
 import deincraftlauncher.IO.ZIPExtractor;
 import deincraftlauncher.IO.download.DownloadHandler;
-import static deincraftlauncher.IO.download.DownloadHandler.downloaderHeight;
 import deincraftlauncher.IO.download.Downloader;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.ModpackSelector;
+import deincraftlauncher.modPacks.settings;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -51,6 +53,7 @@ public class FXMLSheetController implements Initializable {
         instance = this;
         
         loadConfig();
+        settings.loadFromFile();
         
         PackSelecter.init();
         Image infinityImage = new Image(getClass().getResource("/deincraftlauncher/Images/logo_FTBInfinity.jpg").toString());
@@ -69,7 +72,7 @@ public class FXMLSheetController implements Initializable {
         Vanilla.setWIP(true);
         Modpack Deincraft = new Modpack("Deincraft-Tekkit", DCImage, Color.LIGHTGOLDENRODYELLOW);
         Deincraft.setInfoFileLink("https://www.dropbox.com/s/cjb72vmu7xm1f93/deincraft-tekkit.txt?dl=1");
-        Deincraft.setForgeVersion("1.7.10-10.13.4.1558-1.7.10");
+        Deincraft.setForgeVersion("1.7.10-10.13.4.1614-1.7.10");
         PackSelecter.registerModpack(Deincraft);
         PackSelecter.registerModpack(Skyfactory);
         PackSelecter.registerModpack(Vanilla);
@@ -85,9 +88,23 @@ public class FXMLSheetController implements Initializable {
         checkForUpdates();
         Config.config().updateLib();
         
+        //reselect();
+        
         System.out.println("starting done");
         
     }   
+    
+    private void reselect() {
+        
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("reselecting pack");
+                PackSelecter.selectedPack.select();
+            }
+        }, 300);
+    }
     
     public void onTestClick() {
         System.out.println("klicked testTile!");
@@ -164,6 +181,7 @@ public class FXMLSheetController implements Initializable {
             
             ModpackSelector.getInstance().reloadScreenshots();
             ModpackSelector.getInstance().selectedPack.getView().disableLoading();
+            reselect();
         });
     }
     

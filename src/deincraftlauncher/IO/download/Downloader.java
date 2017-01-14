@@ -42,6 +42,7 @@ public class Downloader {
     private float totalProgress;
     private boolean finished = false;
     private FunctionProg onUpdate;
+    private Function onPrepared;
     private final Downloader instance;
     
     public Downloader(String URL, String saveTo) {
@@ -51,6 +52,7 @@ public class Downloader {
         onFinished = this::doNothing;
         onFinishedB = this::doNothing;
         onUpdate = this::doNothing;
+        onPrepared = this::doNothing;
         instance = this;
         
     }
@@ -84,6 +86,8 @@ public class Downloader {
                 System.out.println("Prepared Download: size: " + totalSize + " name=" + fileName);
                 prepared = true;
                 preparing = false;
+                
+                onPrepared.call(instance);
 
             } catch (MalformedURLException ex) {
                 Logger.getLogger(Downloader.class.getName()).log(Level.SEVERE, null, ex);
@@ -256,6 +260,10 @@ public class Downloader {
 
     public void setOnFinishedB(Function func) {
         onFinishedB = func;
+    }
+    
+    public void setOnPrepared(Function func) {
+        onPrepared = func;
     }
 
     public String getFileName() {

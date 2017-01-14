@@ -38,6 +38,10 @@ public class Config {
         return "Config{" + "DCFolder=" + DCFolder + '}';
     }
     
+    public static String getSettingFile() {
+        return System.getProperty("user.home") + File.separator + "Deincraft" + File.separator + "settings";
+    }
+    
     public static String getLauncherFolder() {
         return instance.DCFolder + "Launcher" + File.separator;
     }
@@ -58,17 +62,17 @@ public class Config {
     public void updateLib() {
         
         System.out.println("checking lib update!");
-        
-        File test = new File(getCacheFolder());
+        return;
+        /*File test = new File(getCacheFolder());
         if (!test.exists()) {
-            System.out.println("Libs not downloaded!");
-            test.mkdirs();
-            DownloadHandler.addItem(getCacheFolder(), libLink, this::onFinished);
-            DownloadHandler.start();
-            DownloadHandler.setTitle("Downloading Assets");
+        System.out.println("Libs not downloaded!");
+        test.mkdirs();
+        DownloadHandler.addItem(getCacheFolder(), libLink, this::onFinished);
+        DownloadHandler.start();
+        DownloadHandler.setTitle("Downloading Assets");
         } else {
-            System.out.print("cache folder already existing");
-        }
+        System.out.print("cache folder already existing");
+        }*/
         
     }
     

@@ -74,6 +74,7 @@ public final class ModpackView {
     
     private ImageView loading;
     private ImageView loadingb;
+    private boolean WIP = false;
     
     private boolean Visible = false;
     
@@ -302,6 +303,7 @@ public final class ModpackView {
     }
     
     public void setStartVisible(boolean State) {
+        
         StartTile.setVisible(State);
         StartText.setVisible(State);
     }
@@ -346,6 +348,10 @@ public final class ModpackView {
     
     public void setWIP() {
         
+        WIP = true;
+        
+        boolean visible = pack.equals(ModpackSelector.getInstance().selectedPack);
+        
         Rectangle gray = new Rectangle();
         gray.setFill(Color.rgb(30, 30, 30, 0.8));
         gray.setLayoutX(0);
@@ -354,6 +360,9 @@ public final class ModpackView {
         gray.setHeight(deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getPrefHeight());
         Nodes.add(gray);
         deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(gray);
+        if (!visible) {
+            gray.setVisible(false);
+        }
         
         Label titleWIP = new Label();
         titleWIP.setText("Coming soon");
@@ -363,7 +372,11 @@ public final class ModpackView {
         titleWIP.setPrefHeight(deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getPrefHeight());
         titleWIP.setAlignment(Pos.CENTER);
         titleWIP.setTextAlignment(TextAlignment.CENTER);
+        Nodes.add(titleWIP);
         deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(titleWIP);
+        if (!visible) {
+            gray.setVisible(false);
+        }
     }
     
 }

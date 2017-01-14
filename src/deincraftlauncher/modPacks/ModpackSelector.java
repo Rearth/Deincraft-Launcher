@@ -142,6 +142,7 @@ public class ModpackSelector {
     
     private void handleOptionClick(DCTile tileClicked) {
         System.out.println("opening settings");
+        settings.showWindow();
         
     }
     

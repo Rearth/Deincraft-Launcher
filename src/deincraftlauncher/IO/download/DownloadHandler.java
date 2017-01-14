@@ -85,6 +85,9 @@ public class DownloadHandler {
         elem.prepare();
         elem.setOnFinished(this::downloadFinished);
         elem.setOnUpdate(this::onUpdate);
+        if (active) {
+            addWhileActive(elem);
+        }
         instance.prepared.add(elem);
          
     }
@@ -96,14 +99,29 @@ public class DownloadHandler {
             return;
         }
         
+        
         Downloader elem = new Downloader(Link, targetPath);
         System.out.println("download");
         elem.prepare();
         elem.setOnFinished(this::downloadFinished);
         elem.setOnFinishedB(func);
         elem.setOnUpdate(this::onUpdate);
+        
+        if (active) {
+            addWhileActive(elem);
+        }
         instance.prepared.add(elem);
          
+    }
+    
+    private void addWhileActive(Downloader elem) {
+        numOfElems++;
+        elem.setOnPrepared(this::prepareDone);
+        
+    }
+    
+    private void prepareDone(Downloader loader) {
+        totalSize += loader.getTotalSize();
     }
     
     private void downloadFinished(Downloader loader) {
@@ -146,6 +164,7 @@ public class DownloadHandler {
                 Logger.getLogger(DownloadHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
             totalSize += item.getTotalSize();
+            System.out.println("downloader total size:" + calcToMB(totalSize));
             
         }
         

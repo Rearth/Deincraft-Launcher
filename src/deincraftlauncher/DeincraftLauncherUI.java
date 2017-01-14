@@ -56,7 +56,7 @@ public class DeincraftLauncherUI extends Application {
         String UserDir = System.getProperty("user.home");
         System.out.println("Userdirectory = " + UserDir);
         
-        File file = new File(UserDir + File.separator + "Deincraft");
+        File file = new File(UserDir + File.separator + "Deincraft" + File.separator + "config.txt");
         System.out.println("config path: " + UserDir + File.separator + "Deincraft");
         System.out.println("first time: " + !file.exists());
         return !file.exists();
