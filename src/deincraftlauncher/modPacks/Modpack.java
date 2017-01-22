@@ -10,10 +10,13 @@ import deincraftlauncher.IO.FileUtils;
 import deincraftlauncher.IO.ZIPExtractor;
 import deincraftlauncher.IO.download.DownloadHandler;
 import deincraftlauncher.IO.download.Downloader;
+import deincraftlauncher.IO.download.FTPSync;
 import deincraftlauncher.designElements.ModpackView;
 import deincraftlauncher.start.StartMinecraft;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -206,21 +209,38 @@ public class Modpack {
         if (updateAvaible()) {
             view.setStartLocked("Downloade...");
             System.out.println("Downloading update");
+            if (!ModsVersion.equals(ModsVersionInstalled)) {
+                updateMods();
+                //DownloadHandler.addItem(path, ModsLink, this::onDownloaderFinish);
+            }
             if (!MainVersion.equals(MainVersionInstalled)) {
                 DownloadHandler.addItem(path, MainLink, this::onDownloaderFinish);
-            }
-            if (!ModsVersion.equals(ModsVersionInstalled)) {
-                DownloadHandler.addItem(path, ModsLink, this::onDownloaderFinish);
+                DownloadHandler.setTitle("Downloade " + Name);
+                DownloadHandler.start();
             }
             if (!ConfigVersion.equals(ConfigVersionInstalled)) {
                 DownloadHandler.addItem(path, ConfigLink, this::onDownloaderFinish);
+                DownloadHandler.setTitle("Downloade " + Name);
+                DownloadHandler.start();
             }
-            DownloadHandler.setTitle("Downloade " + Name);
-            DownloadHandler.start();
         } else {
             startPack();
         }
         
+    }
+    
+    public void onModsFinished() {
+        
+        ModsVersionInstalled = ModsVersion;
+        saveConfig();
+        
+        if (!updateAvaible()) {
+            System.out.println("Finished all files for this pack, enabling start button");
+            Platform.runLater(() -> {
+                view.updateInfo();
+                view.setStartUnLocked("Start");      
+            });
+        }
     }
     
     private void onDownloaderFinish(Downloader loader) {
@@ -271,6 +291,16 @@ public class Modpack {
 
         thread.start();
     }
+    
+    private void updateMods() {
+        
+        System.out.println("updating mods from ftp server");
+        
+        final String FTPDir = "/server/46.4.75.39_25565/mcforge/mods";
+        
+        FTPSync synctask = new FTPSync(this.getPath() + "mods" + File.separator, FTPDir, this);
+        
+    }
 
     //<editor-fold defaultstate="collapsed" desc="getter/setter">
     public ModpackView getView() {
@@ -306,6 +336,8 @@ public class Modpack {
         
         return path;
     }
+    
+    //<editor-fold defaultstate="collapsed" desc="getter/setter">
     
     public String getModsVersion() {
         return ModsVersion;
@@ -382,39 +414,39 @@ public class Modpack {
     public void setNews(String News) {
         this.News = News;
     }
-
+    
     public String getName() {
         return Name;
     }
-
+    
     public String getVersion() {
         return MainVersionInstalled;
     }
-
+    
     public Image getImage() {
         return image;
     }
-
+    
     public String getModsVersionInstalled() {
         return ModsVersionInstalled;
     }
-
+    
     public void setModsVersionInstalled(String ModsVersionInstalled) {
         this.ModsVersionInstalled = ModsVersionInstalled;
     }
-
+    
     public String getConfigVersionInstalled() {
         return ConfigVersionInstalled;
     }
-
+    
     public void setConfigVersionInstalled(String ConfigVersionInstalled) {
         this.ConfigVersionInstalled = ConfigVersionInstalled;
     }
-
+    
     public String getMainVersionInstalled() {
         return MainVersionInstalled;
     }
-
+    
     public void setMainVersionInstalled(String MainVersionInstalled) {
         this.MainVersionInstalled = MainVersionInstalled;
     }
@@ -422,11 +454,11 @@ public class Modpack {
     public String getForgeVersion() {
         return forgeVersion;
     }
-
+    
     public void setForgeVersion(String forgeVersion) {
         this.forgeVersion = forgeVersion;
     }
     
-    //</editor-fold>
+//</editor-fold>
 
 }

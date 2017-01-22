@@ -7,8 +7,10 @@ package deincraftlauncher.modPacks;
 
 import deincraftlauncher.Config;
 import deincraftlauncher.IO.download.DownloadHandler;
+import deincraftlauncher.IO.download.Downloader;
 import deincraftlauncher.designElements.DCTile;
 import static deincraftlauncher.designElements.DesignHelpers.defaultgap;
+import java.io.File;
 import java.util.ArrayList;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
@@ -106,8 +108,6 @@ public class ModpackSelector {
             shortenLabels();
         }
         
-        
-        
     }
     
     public int getBottomEnd() {
@@ -143,7 +143,6 @@ public class ModpackSelector {
     private void handleOptionClick(DCTile tileClicked) {
         System.out.println("opening settings");
         settings.showWindow();
-        
     }
     
     private void handleMinimize(DCTile tileClicked) {

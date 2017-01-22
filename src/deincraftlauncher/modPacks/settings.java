@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -158,10 +159,17 @@ public class settings implements Serializable {
         save.setLayoutY(saveY);
         save.setStyle("-fx-border-color:  rgba(0, 0, 139, 1); -fx-border-radius: 5; -fx-border-width: 2;");
         background.getChildren().add(save);
+        save.setOnMouseClicked((MouseEvent e) -> {
+                handleSave(dialog);
+            });
         
         Scene dialogScene = new Scene(background, sizeX, sizeY);
         dialog.setScene(dialogScene);
         dialog.show();
+    }
+    
+    private static void handleSave(Stage stage) {
+        stage.close();
     }
     
 }

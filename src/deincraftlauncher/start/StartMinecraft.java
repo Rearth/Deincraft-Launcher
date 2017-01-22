@@ -38,8 +38,8 @@ public class StartMinecraft {
             //YggdrasilAuth.auth(settings.getUsername(), settings.getPassword());
             
             LaunchTask task = new LaunchTaskBuilder()
-            //.setOffline()
-            //.setNetOffline()
+            .setOffline()
+            .setNetOffline()
             .setCachesDir(Config.getCacheFolder())
             .setForgeVersion("1.7.10", pack.getForgeVersion())
             .setInstanceDir(pack.getPath())
@@ -76,7 +76,7 @@ public class StartMinecraft {
                             pack.getView().setStartLoading(false);
                             pack.getView().setStartLocked("started");
                         });
-                    } else if (line.contains("[Client thread/INFO]: Stopping!")) {
+                    } else if (isErrorCode(line)) {
                         Platform.runLater(() -> {
                             System.out.println("minecraft stopped");
                             pack.getView().setStartUnLocked("Start");
@@ -92,6 +92,13 @@ public class StartMinecraft {
             Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+    }
+    
+    private static boolean isErrorCode(String Code) {
+        String errA = "cpw.mods.fml.relauncher.FMLSecurityManager$ExitTrappedException";
+        String errB = "[Client thread/INFO]: Stopping!";
+        String errC = "#@!@# Game crashed! Crash report saved to: #@!@#";
+        return Code.contains(errA) || Code.contains(errB) || Code.contains(errC);
     }
 
     private static class MCPasswordSupplier implements PasswordSupplier {
