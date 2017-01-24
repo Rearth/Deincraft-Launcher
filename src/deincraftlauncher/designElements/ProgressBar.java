@@ -75,7 +75,7 @@ public class ProgressBar {
         
         left.setWidth(sizeX * progress + 2);
         right.setLayoutX(posX + sizeX * progress);
-        right.setWidth(sizeX * (1- progress));
+        right.setWidth(sizeX * (1 - progress));
         
     }
 

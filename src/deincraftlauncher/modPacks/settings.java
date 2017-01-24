@@ -6,6 +6,8 @@
 package deincraftlauncher.modPacks;
 
 import deincraftlauncher.Config;
+import deincraftlauncher.designElements.DesignHelpers;
+import deincraftlauncher.designElements.TextButton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,12 +17,15 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -38,13 +43,20 @@ public class settings implements Serializable {
     private static final Color blueColor = Color.DARKBLUE;
     private static final int separatorY = 60;
     private static final int separatorSizeY = 5;
-    private static final int saveY = 225;
-    private static final int saveX = 340;
-    private static final int cancelX = 280;
+    private static final int infoLeftX = 20;
+    private static final int infoLeftBX = 70;
+    private static final int userNameY = 80;
+    private static final int RAMY = 120;
+    private static final int saveY = 214;
+    private static final int saveX = sizeX - TextButton.getWidth("speichern") - 6;
+    private static final int cancelX = saveX - 6 - TextButton.getWidth("cancel");
     
+    private static TextField editRam;
+
     public String Username = "error";
     public String Password = "error";
     public int RAM = 4096;
+    
     
     private settings() {
         
@@ -152,16 +164,52 @@ public class settings implements Serializable {
         separator.setFill(blueColor);
         background.getChildren().add(separator);
         
-        Label save = new Label();
-        save.setText("Speichern");
-        save.setTextFill(Color.WHITESMOKE);
-        save.setLayoutX(saveX);
-        save.setLayoutY(saveY);
-        save.setStyle("-fx-border-color:  rgba(0, 0, 139, 1); -fx-border-radius: 5; -fx-border-width: 2;");
-        background.getChildren().add(save);
-        save.setOnMouseClicked((MouseEvent e) -> {
+        TextButton save = new TextButton(saveX, saveY, "Speichern", Color.GREEN, background);
+        save.setOnClick((TextButton tile) -> {
                 handleSave(dialog);
             });
+        
+        TextButton cancel = new TextButton(cancelX, saveY, "cancel", Color.RED, background);
+        cancel.setOnClick((TextButton tile) -> {
+                handleCancel(dialog);
+            });
+        
+        Label Title = new Label();
+        Title.setText("Optionen");
+        Title.setPrefSize(sizeX, separatorY);
+        Title.setTextFill(Color.WHITESMOKE);
+        Title.setTextAlignment(TextAlignment.CENTER);
+        Title.setFont(DesignHelpers.getFocusFont(42));
+        Title.setAlignment(Pos.CENTER);
+        background.getChildren().add(Title);
+        
+        Label usernameInfoA = new Label();
+        usernameInfoA.setText("User:");
+        usernameInfoA.setLayoutX(infoLeftX);
+        usernameInfoA.setLayoutY(userNameY);
+        usernameInfoA.setTextFill(Color.WHITE);
+        background.getChildren().add(usernameInfoA);
+        
+        Label usernameInfo = new Label();
+        usernameInfo.setText(settings.getUsername());
+        usernameInfo.setLayoutX(infoLeftBX);
+        usernameInfo.setLayoutY(userNameY);
+        usernameInfo.setTextFill(Color.WHITE);
+        background.getChildren().add(usernameInfo);
+        
+        Label RamField = new Label();
+        RamField.setText("RAM: ");
+        RamField.setLayoutX(infoLeftX);
+        RamField.setLayoutY(RAMY);
+        RamField.setTextFill(Color.WHITE);
+        background.getChildren().add(RamField);
+        
+        editRam = new TextField();
+        editRam.setText(Integer.toString(settings.getRAM()));
+        editRam.setLayoutX(infoLeftBX);
+        editRam.setLayoutY(RAMY);
+        editRam.setPrefWidth(100);
+        background.getChildren().add(editRam);
         
         Scene dialogScene = new Scene(background, sizeX, sizeY);
         dialog.setScene(dialogScene);
@@ -169,6 +217,17 @@ public class settings implements Serializable {
     }
     
     private static void handleSave(Stage stage) {
+        System.out.println("saving settings");
+        int readRAM = Integer.valueOf(editRam.getText());
+        System.out.println("changed RAM to: " + readRAM + " (from):" + instance.RAM);
+        instance.RAM = readRAM;
+        settings.save();
+        stage.close();
+    }
+    
+    
+    private static void handleCancel(Stage stage) {
+        System.out.println("cancelling settings");
         stage.close();
     }
     

@@ -294,6 +294,17 @@ public final class ModpackView {
         pack.saveConfig();
     }
     
+    public void updateStats() {
+        
+        playersInfoR.setText(pack.getPlayersOnline() + "/" + pack.getMaxPlayers());
+        if (pack.getServerState().equals("Online")) {
+            serverStateR.setTextFill(Color.GREEN);
+        } else {
+            serverStateR.setTextFill(Color.RED);            
+        }
+        serverStateR.setText(pack.getServerState());
+    }
+    
     private void startClicked() {
         if (!StartTile.isFocusable()) {
             System.out.println("pressed locked start");

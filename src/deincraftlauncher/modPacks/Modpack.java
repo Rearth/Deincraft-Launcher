@@ -24,6 +24,8 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import query.MCQuery;
+import query.QueryResponse;
 
 /**
  *
@@ -45,6 +47,9 @@ public class Modpack {
     private boolean serverOnline = true;
     private boolean WIP = false;
     private String forgeVersion;
+    private MCQuery mcQuery;
+    private String serverIP;
+    private int serverPort;
     
     //Server loaded things
     private String InfoFileLink;
@@ -87,11 +92,13 @@ public class Modpack {
         view = new ModpackView(this);
         path = Config.getGameFolder() + this.Name + File.separator;
         
+        
     }
     
     public void select() {
         ModpackSelector.getInstance().selectedPack = this;
         System.out.println("Selected Modpack: " + this.Name);
+        updateServerChecker();
         showUp();
     }
     
@@ -296,7 +303,7 @@ public class Modpack {
         
         System.out.println("updating mods from ftp server");
         
-        final String FTPDir = "/server/46.4.75.39_25565/mcforge/mods";
+        final String FTPDir = "/upload/" + this.getName() + "/mods";
         
         FTPSync synctask = new FTPSync(this.getPath() + "mods" + File.separator, FTPDir, this);
         
@@ -335,6 +342,11 @@ public class Modpack {
         }
         
         return path;
+    }
+    
+    public void setServer(String IP, int port) {
+        this.serverIP = IP;
+        this.serverPort = port;
     }
     
     //<editor-fold defaultstate="collapsed" desc="getter/setter">
@@ -460,5 +472,32 @@ public class Modpack {
     }
     
 //</editor-fold>
-
+    
+    private void updateServerChecker() {
+        
+        if (serverIP == null || serverPort == 0) {
+            return;
+        }
+        
+        System.out.println("Starting server query");
+        try {
+            mcQuery = new MCQuery(serverIP, serverPort); //"46.4.75.39"; 25575
+            QueryResponse response = mcQuery.basicStat();
+            playersOnline = response.getOnlinePlayers();
+            maxPlayers = response.getMaxPlayers();
+            serverOnline = true;
+            System.out.println(response);
+        } catch (Exception ex) {
+            System.err.println("error contacting server");
+            playersOnline = 0;
+            maxPlayers = 0;
+            serverOnline = false;
+        }
+        Platform.runLater(() -> {
+                this.getView().updateStats();
+            });
+        
+        
+    }
+    
 }

@@ -6,6 +6,8 @@
 package deincraftlauncher.start;
 
 import deincraftlauncher.Config;
+import deincraftlauncher.IO.download.FTPConnection;
+import deincraftlauncher.IO.download.FTPDownloader;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.settings;
 import java.io.BufferedReader;
@@ -13,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -29,6 +33,51 @@ import uk.co.rx14.jmclaunchlib.util.ChangePrinter;
 public class StartMinecraft {
     
     public static void start(Modpack pack) {
+        
+        if (hasCaches()) {
+            startMC(pack);
+        } else {
+            
+            Thread prepareThread = new Thread(){
+                @Override
+                public void run(){
+                    createCaches(pack);
+                }
+            };
+
+            prepareThread.start();
+            
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.out.println("starting offline, caches done");
+                    prepareThread.interrupt();
+                    startMC(pack);
+                }
+            }, 15000);
+        }
+    }
+    
+    private static void createCaches(Modpack pack) {
+        System.out.println("creating caches!");
+            LaunchTask task = new LaunchTaskBuilder()
+            //.setOffline()
+            //.setNetOffline()
+            .setCachesDir(Config.getCacheFolder())
+            .setForgeVersion("1.7.10", pack.getForgeVersion())
+            .setInstanceDir(pack.getPath())
+            .setUsername(settings.getUsername())
+            .setPasswordSupplier(new MCPasswordSupplier())
+            .build();
+            
+            LaunchSpec spec = task.getSpec();
+            //Process run = spec.run(new File(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe").toPath());
+            
+            //LaunchSpec spec = task.getSpec();
+    }
+    
+    public static void startMC(Modpack pack) {
         //http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forge-1.7.10-10.13.4.1558-1.7.10-universal.jar
         try {
             
@@ -59,7 +108,6 @@ public class StartMinecraft {
             
             LaunchSpec spec = task.getSpec();
             
-            System.out.println("current task: " + task.getCurrentTasks());
             System.out.println("starting MC process");
             System.out.println(spec.getJavaCommandline());
             
@@ -112,74 +160,17 @@ public class StartMinecraft {
             return settings.getPassword();
         }
     }
-    /*
-    private final static String authserver = "https://authserver.mojang.com";
     
-    public static String authenticate(String username, String password) throws Exception {
-    
-    String genClientToken = UUID.randomUUID().toString();
-    
-    // Setting up json POST request
-    String payload = "{\"agent\": {\"name\": \"Minecraft\",\"version\": 1},\"username\": \"" + username
-    + "\",\"password\": \"" + password + "\",\"clientToken\": \"" + genClientToken + "\"}";
-    
-    String output = postReadURL(payload, new URL(authserver + "/authenticate"));
-    
-    // Setting up patterns
-    String authBeg = "{\"accessToken\":\"";
-    String authEnd = "\",\"clientToken\":\"";
-    String clientEnd = "\",\"selectedProfile\"";
-    
-    // What we are looking for
-    String authtoken = getStringBetween(output, authBeg, authEnd);
-    return authtoken;
+    private static boolean hasCaches() {
+        
+        File cachefolder = new File(Config.getCacheFolder());
+        
+        if (!cachefolder.exists()) {
+            cachefolder.mkdirs();
+            return false;
+        }
+        
+        return cachefolder.listFiles().length >= 1;
+        
     }
-    
-    private static String postReadURL(String payload, URL url) throws Exception {
-    HttpsURLConnection con = (HttpsURLConnection) (url.openConnection());
-    
-    con.setReadTimeout(15000);
-    con.setConnectTimeout(15000);
-    con.setRequestMethod("POST");
-    con.setRequestProperty("Content-Type", "application/json");
-    con.setDoInput(true);
-    con.setDoOutput(true);
-    
-    OutputStream out = con.getOutputStream();
-    out.write(payload.getBytes("UTF-8"));
-    out.close();
-    
-    BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-    
-    String output = "";
-    String line = null;
-    while ((line = in.readLine()) != null)
-    output += line;
-    
-    in.close();
-    
-    return output;
-    }
-    
-    private static String getStringBetween(String base, String begin, String end) {
-    
-    Pattern patbeg = Pattern.compile(Pattern.quote(begin));
-    Pattern patend = Pattern.compile(Pattern.quote(end));
-    
-    int resbeg = 0;
-    int resend = base.length() - 1;
-    
-    Matcher matbeg = patbeg.matcher(base);
-    
-    if (matbeg.find())
-    resbeg = matbeg.end();
-    
-    Matcher matend = patend.matcher(base);
-    
-    if (matend.find())
-    resend = matend.start();
-    
-    return base.substring(resbeg, resend);
-    }
-    */
 }

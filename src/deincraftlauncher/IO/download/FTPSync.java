@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -20,9 +22,11 @@ import org.apache.commons.net.ftp.FTPClient;
  */
 public class FTPSync {
     
-    private static final String ftpUsername = "user3-1";
-    private static final String ftpPassword = "NBzF3d3gLJ";
+    private static final String ftpUsername = "userftp";
+    private static final String ftpPassword = "mchostergeheim";
     private static final String ftpServer = "46.4.75.39";
+    
+    //new account data: Userm: userftp; pw: mchostergeheim
 
     private final String folder;
     private final String FTPDir;
@@ -79,59 +83,36 @@ public class FTPSync {
     
     private void downloadServerFiles() {
         
-        FTPClient client = new FTPClient();
         
-        try {
-            //loader = DownloadHandler.addDummy(size, name, folder);
-            client.connect(ftpServer);
-            client.login(ftpUsername, ftpPassword);
-            client.changeWorkingDirectory(FTPDir);
-            client.enterLocalPassiveMode();
-            client.setFileType(FTP.BINARY_FILE_TYPE);
-            
-            /*//countfiles
-            for (String elem : OnlineFiles) {
+        FTPConnection.connect();
+        FTPConnection.changeDir(FTPDir);
+        
+        for (String elem : OnlineFiles) {
             if (!ClientFiles.contains(elem)) {
-            FTPFile file = client.mlistFile(elem);
-            loader = DownloadHandler.addDummy(file.getSize(), elem, folder);
-            }
-            }*/
-            for (String elem : OnlineFiles) {
-                if (!ClientFiles.contains(elem)) {
-                    if (!elem.contains(".") && !elem.contains(".jar") && !elem.contains(".zip")) {
-                    } else {
-                        DownloadFiles.add(elem);
-                    }
+                if (!elem.contains(".") && !elem.contains(".jar") && !elem.contains(".zip")) {
+                } else {
+                    DownloadFiles.add(elem);
                 }
-            }
-            
-            for (String elem : OnlineFiles) {
-                if (!ClientFiles.contains(elem)) {
-                    //System.out.println("downloading online file: " + elem);
-                    downloadFTPFile(elem, client);
-                }
-            }
-            DownloadHandler.setStartBlocked(false);
-            Platform.runLater(() -> {
-                pack.getView().setStartLoading(false);
-            });
-            Platform.runLater(DownloadHandler::start);
-
-            client.logout();
-            
-        } catch (IOException e) {
-            System.err.println("Error connecting to ftp (listfiles): " + e);
-        } finally {
-            
-            try {
-                client.disconnect();
-            } catch (IOException e) {
-                System.err.println("Error disconnecting to ftp (listfiles): " + e);
             }
         }
+        for (String elem : OnlineFiles) {
+            if (!ClientFiles.contains(elem)) {
+                try {
+                    //System.out.println("downloading online file: " + elem);
+                    downloadFTPFile(elem);
+                } catch (IOException ex) {
+                    Logger.getLogger(FTPSync.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        DownloadHandler.setStartBlocked(false);
+        Platform.runLater(() -> {
+            pack.getView().setStartLoading(false);
+        });
+        Platform.runLater(DownloadHandler::start);
     }
     
-    private void downloadFTPFile(String name, FTPClient client) throws IOException {
+    private void downloadFTPFile(String name) throws IOException {
         
         
         if (!name.contains(".jar") && !name.contains(".zip")) {

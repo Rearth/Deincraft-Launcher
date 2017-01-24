@@ -168,10 +168,17 @@ public class InstallController implements Initializable {
             saveConfig();
             String jarFile = getDCFile();
             String command = "java -jar " + jarFile;
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.exit(0);
+                }
+            }, 4000);
             try {
                 Process p = Runtime.getRuntime().exec ("cmd /C " + command);
                 BufferedReader stdout = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                String line = null;
+                String line;
                 try {
                         while ((line = stdout.readLine()) != null) {
                                 System.out.println(line);
@@ -183,14 +190,6 @@ public class InstallController implements Initializable {
                 Logger.getLogger(InstallController.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    System.err.println("installer stayed active for debug purposes");
-                    //System.exit(0);
-                }
-            }, 200);
             
         }
         
