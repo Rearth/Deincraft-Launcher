@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.shape.*?>
 <?import java.lang.*?>
@@ -10,32 +11,24 @@
 
 <AnchorPane id="AnchorPane" fx:id="mainPanel" prefHeight="238.0" prefWidth="481.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="deincraftlauncher.InstallController">
    <children>
-      <Label layoutX="12.0" layoutY="14.0" prefHeight="54.0" prefWidth="457.0" text="Deincraft Installer" textFill="#4a3f3f">
-         <font>
-            <Font name="Calibri Light" size="62.0" />
-         </font>
-      </Label>
-      <Label fx:id="loginLabel" layoutX="173.0" layoutY="94.0" prefHeight="25.0" prefWidth="302.0" />
-      <Label fx:id="pathLabel" layoutX="12.0" layoutY="210.0" prefHeight="17.0" prefWidth="350.0" text="Path" />
-      <Button fx:id="changePath" focusTraversable="false" layoutX="368.0" layoutY="206.0" mnemonicParsing="false" onAction="#onChangePath" prefHeight="17.0" prefWidth="24.0" text="..." />
-      <Label layoutX="12.0" layoutY="189.0" prefHeight="17.0" prefWidth="125.0" text="Installationsordner:">
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#32323c" height="238.0" stroke="BLACK" strokeType="INSIDE" width="481.0" />
+      <Label fx:id="loginLabel" layoutX="14.0" layoutY="150.0" prefHeight="25.0" prefWidth="278.0" textFill="WHITE" />
+      <Label fx:id="pathLabel" layoutX="12.0" layoutY="210.0" prefHeight="17.0" prefWidth="345.0" text="Path" />
+      <Button fx:id="changePath" focusTraversable="false" layoutX="362.0" layoutY="206.0" mnemonicParsing="false" onAction="#onChangePath" prefHeight="17.0" prefWidth="24.0" text="..." />
+      <Label layoutX="12.0" layoutY="189.0" prefHeight="17.0" prefWidth="125.0" text="Installationsordner:" textFill="WHITE">
          <font>
             <Font name="Calibri Bold" size="12.0" />
          </font>
       </Label>
-      <Button fx:id="ContinueButton" defaultButton="true" focusTraversable="false" layoutX="399.0" layoutY="185.0" mnemonicParsing="false" onAction="#Continue" prefHeight="46.0" prefWidth="70.0" text="Weiter">
+      <TextField fx:id="Usernamefield" focusTraversable="false" layoutX="14.0" layoutY="90.0" onAction="#SelectUserName" onMouseClicked="#KlickUserName" prefHeight="25.0" prefWidth="164.0" promptText="Nutzername / Mail" />
+      <PasswordField fx:id="Passwordfield" focusTraversable="false" layoutX="14.0" layoutY="120.0" onAction="#SelectPW" prefHeight="25.0" prefWidth="164.0" promptText="Passwort" />
+      <Label layoutX="14.0" layoutY="72.0" prefHeight="17.0" prefWidth="125.0" text="Minecraft Account:" textFill="WHITE">
          <font>
-            <Font name="Microsoft YaHei UI" size="12.0" />
+            <Font name="Calibri Bold" size="12.0" />
          </font>
-      </Button>
-      <Button cancelButton="true" focusTraversable="false" layoutX="399.0" layoutY="145.0" mnemonicParsing="false" onAction="#cancel" prefHeight="31.0" prefWidth="70.0" text="Abbrechen">
-         <font>
-            <Font size="8.0" />
-         </font>
-      </Button>
-      <TextField fx:id="Usernamefield" focusTraversable="false" layoutX="14.0" layoutY="94.0" onAction="#SelectUserName" onMouseClicked="#KlickUserName" text="Nutzername" />
-      <PasswordField fx:id="Passwordfield" focusTraversable="false" layoutX="14.0" layoutY="133.0" onAction="#SelectPW" />
-      <Button fx:id="loginButton" focusTraversable="false" layoutX="171.0" layoutY="94.0" mnemonicParsing="false" onAction="#doLogin" prefHeight="25.0" prefWidth="70.0" text="Login" />
-      <Button fx:id="registerButton" focusTraversable="false" layoutX="171.0" layoutY="133.0" mnemonicParsing="false" onAction="#doRegister" prefHeight="25.0" prefWidth="70.0" text="Register" />
+      </Label>
    </children>
+   <opaqueInsets>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </opaqueInsets>
 </AnchorPane>

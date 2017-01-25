@@ -6,6 +6,7 @@
 package deincraftlauncher.designElements;
 
 import deincraftlauncher.FXMLSheetController;
+import deincraftlauncher.modPacks.ModpackSelector;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.font.FontRenderContext;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.animation.ScaleTransition;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -47,8 +49,9 @@ public class TextButton {
     private int width;
     private String Text;
     private boolean focused = false;    
-    private final Color Button;
+    private Color Button;
     private boolean focusable = true;
+    private boolean locked = false;
     
     public TextButton(int posX, int posY, String Text, Color color, Pane pane) {
         this.posX = posX;
@@ -274,5 +277,26 @@ public class TextButton {
         AffineTransform affinetransform = new AffineTransform();     
         FontRenderContext frc = new FontRenderContext(affinetransform,true,true);  
         return (int)(fonthere.getStringBounds(Text, frc).getWidth() * 1.1 * 1.05);
+    }
+    
+    public void setColor(Color color) {
+        this.Button = color;
+        background.setFill(color);
+    }
+    
+    public void playAnim() {
+        
+        System.out.println("playing click anim");
+        focusAnim(1.0, scaleTo, 200);
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    focusAnim(scaleTo, 1.0, 200);
+                });
+            }
+        }, 200);
+        
     }
 }

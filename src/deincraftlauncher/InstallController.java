@@ -5,6 +5,9 @@
  */
 package deincraftlauncher;
 
+import deincraftlauncher.IO.MCAuthentication;
+import deincraftlauncher.designElements.DesignHelpers;
+import deincraftlauncher.designElements.TextButton;
 import deincraftlauncher.modPacks.settings;
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,6 +29,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -38,7 +42,9 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -55,21 +61,21 @@ public class InstallController implements Initializable {
     @FXML
     Button changePath;
     @FXML
-    Button ContinueButton;
-    @FXML
     TextField Usernamefield;
     @FXML
     PasswordField Passwordfield;
     @FXML
     Label loginLabel;
     @FXML
-    Button loginButton;
-    @FXML
-    Button registerButton;
-    @FXML
-    AnchorPane MainPanel;
+    public AnchorPane mainPanel;
     
     private static InstallController instance = null;
+    private static final int arc = 10;
+    private static final Color blueColor = Color.DARKBLUE;
+    private static final int separatorY = 60;
+    private static final int separatorSizeY = 5;
+    private TextButton save;
+    private TextButton login;
     String targetPath = "";
     final File folder = new File(System.getProperty("user.home") + File.separator + "Deincraft");
     File folderLauncher = null;
@@ -92,18 +98,52 @@ public class InstallController implements Initializable {
     public static InstallController getInstance() {
         return instance;
     }
-    
-    @FXML
-    public AnchorPane mainPanel;
-    
+        
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         instance = this;
         
         System.out.println("Starting Installer UI...");
         
+        int saveX = 393;
+        int cancelY = 165;
+        int saveY = 200;
+        int sizeX = 481;
+        
+        Rectangle separator = new Rectangle();
+        separator.setWidth(sizeX);
+        separator.setHeight(separatorSizeY);
+        separator.setLayoutY(separatorY);
+        separator.setFill(blueColor);
+        mainPanel.getChildren().add(separator);
+        mainPanel.setBackground(Background.EMPTY);
+                
+        TextButton cancel = new TextButton(saveX, cancelY, "cancel", Color.RED, mainPanel);
+        cancel.setOnClick((TextButton tile) -> {
+                cancel();
+            });
+        
+        save = new TextButton(saveX, saveY, "Weiter", Color.GRAY, mainPanel);
+        save.setFocusable(false);
+        save.setOnClick((TextButton tile) -> {
+                Continue();
+            });
+        
+        login = new TextButton(14, 151, "Login", Color.BLUE, mainPanel);
+        login.setOnClick((TextButton tile) -> {
+                doLogin(null);
+            });
+        
+        Label Title = new Label();
+        Title.setText("Installer");
+        Title.setPrefSize(sizeX, separatorY);
+        Title.setTextFill(Color.WHITESMOKE);
+        Title.setTextAlignment(TextAlignment.CENTER);
+        Title.setFont(DesignHelpers.getFocusFont(42));
+        Title.setAlignment(Pos.CENTER);
+        mainPanel.getChildren().add(Title);
+        
         pathLabel.setBackground(new Background(new BackgroundFill(Color.rgb(170, 170, 170), radii, insets)));
-        ContinueButton.setBackground(new Background(new BackgroundFill(Color.rgb(190, 190, 200), radii, insets)));
         //ContinueButton.setBackground(new Background(new BackgroundFill(Color.rgb(100, 190, 100), radii, insets))); //Green Version
                 
         setDefaultPath();
@@ -217,7 +257,6 @@ public class InstallController implements Initializable {
     @FXML
     void KlickUserName(MouseEvent event) {
         System.out.println("Username klicked");
-        Usernamefield.setText("");
     }
     
     @FXML
@@ -229,10 +268,10 @@ public class InstallController implements Initializable {
     
     @FXML
     void SelectPW(ActionEvent event) {
+        login.playAnim();
         doLogin(null);
     }
     
-    @FXML
     void doLogin(ActionEvent event) {
         
         System.out.println("Pressing Login");
@@ -240,27 +279,31 @@ public class InstallController implements Initializable {
             popupMessage("Bitte trage einen Namen und ein Passwort ein.");
             return;
         }
+        
+        System.out.println("attempting login as:" + Usernamefield.getText() + " pw:" + Passwordfield.getText());
+        
+        boolean validData = MCAuthentication.isValidLogin(Usernamefield.getText(), Passwordfield.getText());
+        if (!validData) {
+            popupMessage("Ungültige Anmeldedaten");
+            return;
+        }
+        
         System.out.println("Password selected: " + Passwordfield.getText());
-        ContinueButton.requestFocus();
         Username = Usernamefield.getText();
         Password = Passwordfield.getText();
         
-        loginButton.setVisible(false);
-        registerButton.setVisible(false);
+        login.setVisible(false);
+        
         loginLabel.setText("Eingeloggt als " + Username);
         loggedin = true;
         
-        ContinueButton.setBackground(new Background(new BackgroundFill(Color.rgb(100, 190, 100), radii, insets))); //Green Version
+        save.setFocusable(true);
+        save.setColor(Color.GREEN);
         
     }
     
     private boolean checkName(String name) {
         return name.equals("") || name.equals("Nutzername") || name.contains(" ");
-    }   
-    
-    @FXML
-    void doRegister(ActionEvent event) {
-        System.out.println("Pressing Register");
     }
     
     private void popupMessage(String text) {
