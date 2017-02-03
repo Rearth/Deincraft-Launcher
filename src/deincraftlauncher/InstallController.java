@@ -6,6 +6,7 @@
 package deincraftlauncher;
 
 import deincraftlauncher.IO.MCAuthentication;
+import static deincraftlauncher.IO.ZIPExtractor.extractArchive;
 import deincraftlauncher.designElements.DesignHelpers;
 import deincraftlauncher.designElements.TextButton;
 import deincraftlauncher.modPacks.settings;
@@ -24,13 +25,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -49,6 +50,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -190,11 +192,12 @@ public class InstallController implements Initializable {
             settings.setRAM(getDefaultRam());
             settings.save();
             
-            folderLauncher = new File(targetPath + "Launcher");
+            /*folderLauncher = new File(targetPath + "Launcher");
             System.out.println("Launcher: " + folderLauncher);
             folderLauncher.mkdirs();
             folderGame = new File(targetPath + "Games");
-            folderGame.mkdirs();
+            folderGame.mkdirs();*/
+            createGameDir(targetPath);
             
             popupMessage("Installation abgeschlossen. Starte Deincraft Launcher...");
             mainPanel.setVisible(false);
@@ -308,15 +311,13 @@ public class InstallController implements Initializable {
     
     private void popupMessage(String text) {
         
-        Stage dialog = new Stage();
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.initStyle(StageStyle.UTILITY);
-        dialog.initOwner(deincraftlauncher.DeincraftLauncherUI.window);
-        VBox dialogVbox = new VBox(20);
-        dialogVbox.getChildren().add(new Text(text));
-        Scene dialogScene = new Scene(dialogVbox, 300, 40);
-        dialog.setScene(dialogScene);
-        dialog.show();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("Benachrichtigung:");
+        alert.setContentText(text);
+        alert.initModality(Modality.WINDOW_MODAL);
+        alert.initStyle(StageStyle.UNDECORATED);
+        alert.initOwner(deincraftlauncher.DeincraftLauncherUI.window);
+        alert.show();
     }
     
     private void saveConfig() {
@@ -364,6 +365,25 @@ public class InstallController implements Initializable {
         }
         
         return RAM;
+    }
+
+    private void createGameDir(String Path) {
+        
+        System.out.println("filling DC Dir");
+        
+        new File(Path).mkdirs();
+        try {
+            URL inputUrl = getClass().getResource("/deincraftlauncher/Images/DCInstall.zip");
+            String zipFile = Path + "DCInstall.zip";
+            File dest = new File(zipFile);
+            FileUtils.copyURLToFile(inputUrl, dest);
+            extractArchive(zipFile, Path);
+        } catch (Exception ex) {
+            System.err.println("unable to create game directory " + ex);
+            ex.printStackTrace();
+        }
+        
+        
     }
     
 }

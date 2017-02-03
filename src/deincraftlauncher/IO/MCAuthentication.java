@@ -10,6 +10,7 @@ import net.chris54721.openmcauthenticator.exceptions.AuthenticationUnavailableEx
 import net.chris54721.openmcauthenticator.exceptions.InvalidCredentialsException;
 import net.chris54721.openmcauthenticator.exceptions.RequestException;
 import net.chris54721.openmcauthenticator.responses.AuthenticationResponse;
+import net.chris54721.openmcauthenticator.responses.RefreshResponse;
 
 /**
  *
@@ -34,6 +35,31 @@ public class MCAuthentication {
         }
         
         return true;
+    }
+    
+    public static String getToken(String Username, String Password) {
+        
+        try {
+            AuthenticationResponse authResponse = OpenMCAuthenticator.authenticate(Username, Password);
+            RefreshResponse refreshResponse = OpenMCAuthenticator.refresh(authResponse.getAccessToken(), authResponse.getClientToken());
+            String authToken = refreshResponse.getAccessToken();
+            
+            System.out.println("Mc Authentication done! + token=" + authToken);
+            System.out.println("is valid Token:" + OpenMCAuthenticator.validate(authToken));
+            return authToken;
+            
+        } catch (RequestException | AuthenticationUnavailableException e) {
+            if (e instanceof AuthenticationUnavailableException) {
+                System.err.println("Minecraft servers unavaible");
+                return "";
+            }
+            if (e instanceof InvalidCredentialsException) {
+                System.err.println("invalid username or password");
+                return "";
+              
+            }
+        }
+        return "";
     }
     
 }

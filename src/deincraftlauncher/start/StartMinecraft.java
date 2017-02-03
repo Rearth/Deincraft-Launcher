@@ -6,8 +6,6 @@
 package deincraftlauncher.start;
 
 import deincraftlauncher.Config;
-import deincraftlauncher.IO.download.FTPConnection;
-import deincraftlauncher.IO.download.FTPDownloader;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.settings;
 import java.io.BufferedReader;
@@ -34,32 +32,77 @@ public class StartMinecraft {
     
     public static void start(Modpack pack) {
         
-        if (hasCaches()) {
-            startMC(pack);
-        } else {
-            
-            Thread prepareThread = new Thread(){
-                @Override
-                public void run(){
-                    createCaches(pack);
-                }
-            };
-
-            prepareThread.start();
-            
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    System.out.println("starting offline, caches done");
-                    prepareThread.interrupt();
-                    startMC(pack);
-                }
-            }, 15000);
-        }
+        startMC(pack);
     }
     
-    private static void createCaches(Modpack pack) {
+    /*private static void startNew(Modpack pack) {
+        
+        System.out.println("pack starting: " + pack.getName() + " path=" + pack.getPath());
+        System.out.println("starting with username=" + settings.getUsername() + " password=" + settings.getPassword());
+
+        //YggdrasilAuth.auth(settings.getUsername(), settings.getPassword());
+
+        LaunchTask task = new LaunchTaskBuilder()
+        .setOffline()
+        .setNetOffline()
+        .setCachesDir(Config.getCacheFolder())
+        .setForgeVersion("1.7.10", pack.getForgeVersion())
+        .setInstanceDir(pack.getPath())
+        .setUsername(settings.getUsername())
+        .setPasswordSupplier(new MCPasswordSupplier())
+        .build();
+
+        System.out.println("created launch task");
+
+        new ChangePrinter(
+            () -> "" + task.getCompletedPercentage(), 100
+        ).start();
+
+        System.out.println("creating launchspec..." + Arrays.toString(task.getRemainingTasks().toArray()));
+
+        System.out.println("current task: " + task.getCurrentTasks() + task.isStarted());
+
+        LaunchSpec spec = task.getSpec();
+
+        System.out.println("creating start Args");
+
+        
+        String StartArg = spec.getJavaCommandline();
+        String accessToken = MCAuthentication.getToken(settings.getUsername(), settings.getPassword());
+        
+        
+        String searchKey = "--accessToken -";
+        int TokenPos = StartArg.indexOf(searchKey) + searchKey.length();
+        
+        String partA = StartArg.substring(0, TokenPos);
+        String partB = StartArg.substring(TokenPos);
+        StartArg = partA + accessToken + partB;
+        
+        StringBuilder sb = new StringBuilder(StartArg);
+        sb.deleteCharAt(TokenPos - 1);
+        StartArg = sb.toString();
+        
+        System.out.println("Args:");
+        System.out.println(StartArg);
+        
+        
+        try {
+            System.out.println("starting process, java dir=" + System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe");
+            Runtime runtime = Runtime.getRuntime();
+            
+            Process p1 = runtime.exec("\"" + System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe" + "\" " + StartArg, null, new File(pack.getPath()));
+            InputStream is = p1.getInputStream();
+            int i ;
+            while ((i = is.read()) != -1) {
+                System.out.print((char)i);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }*/
+    
+    /*private static void createCaches(Modpack pack) {
         System.out.println("creating caches!");
             LaunchTask task = new LaunchTaskBuilder()
             //.setOffline()
@@ -75,7 +118,7 @@ public class StartMinecraft {
             //Process run = spec.run(new File(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe").toPath());
             
             //LaunchSpec spec = task.getSpec();
-    }
+    }*/
     
     public static void startMC(Modpack pack) {
         //http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forge-1.7.10-10.13.4.1558-1.7.10-universal.jar
@@ -87,8 +130,8 @@ public class StartMinecraft {
             //YggdrasilAuth.auth(settings.getUsername(), settings.getPassword());
             
             LaunchTask task = new LaunchTaskBuilder()
-            .setOffline()
-            .setNetOffline()
+            //.setOffline()
+            //.setNetOffline()
             .setCachesDir(Config.getCacheFolder())
             .setForgeVersion("1.7.10", pack.getForgeVersion())
             .setInstanceDir(pack.getPath())

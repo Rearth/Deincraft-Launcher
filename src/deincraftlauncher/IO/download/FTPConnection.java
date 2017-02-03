@@ -41,6 +41,7 @@ public class FTPConnection {
         
         try {
             client.connect(FTPSync.getFtpServer());
+            client.enterLocalPassiveMode();
             client.login(FTPSync.getFtpUsername(), FTPSync.getFtpPassword());
             client.setFileType(FTP.BINARY_FILE_TYPE);
             

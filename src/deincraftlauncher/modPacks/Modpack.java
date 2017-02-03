@@ -13,12 +13,15 @@ import deincraftlauncher.IO.download.Downloader;
 import deincraftlauncher.IO.download.FTPSync;
 import deincraftlauncher.designElements.ModpackView;
 import deincraftlauncher.start.StartMinecraft;
+import static deincraftlauncher.start.StartMinecraft.startMC;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -495,8 +498,15 @@ public class Modpack {
         }
         Platform.runLater(() -> {
                 this.getView().updateStats();
-            });
+        });
         
+        Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    updateServerChecker();
+                }
+            }, 15000);
         
     }
     

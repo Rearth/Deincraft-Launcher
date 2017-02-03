@@ -20,9 +20,13 @@ import java.util.zip.ZipFile;
 public class ZIPExtractor {
     
     public static void extractArchive(String SourceFilePath, String TargetPath) throws Exception {
+        extractArchive(SourceFilePath, TargetPath, true);
+    }
+    
+    public static void extractArchive(String SourceFilePath, String TargetPath, boolean delete) throws Exception {
         
         File archive = new File (SourceFilePath);
-        File destDir = new File(TargetPath);
+        File destDir = new File (TargetPath);
         
         if (!destDir.exists()) {
             destDir.mkdir();
@@ -57,7 +61,10 @@ public class ZIPExtractor {
             }
         }
         System.out.println("Entpacken fertig");
-        archive.delete();
+        if (delete) {
+            archive.delete();
+        }
+        
     }
  
     private static File buildDirectoryHierarchyFor(String entryName, File destDir) {

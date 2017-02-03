@@ -5,12 +5,14 @@
  */
 package deincraftlauncher.designElements;
 
+import deincraftlauncher.DeincraftLauncherUI;
 import deincraftlauncher.IO.download.DownloadHandler;
 import static deincraftlauncher.designElements.DesignHelpers.*;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.ModpackSelector;
 import java.util.ArrayList;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -75,6 +77,11 @@ public final class ModpackView {
     private ImageView loading;
     private ImageView loadingb;
     private boolean WIP = false;
+    private Rectangle gray;
+    private Label titleWIP;
+    
+    private static double xOffset = 0;
+    private static double yOffset = 0;
     
     private boolean Visible = false;
     
@@ -98,6 +105,19 @@ public final class ModpackView {
         title.setBackground(new Background(new BackgroundFill(pack.getTitleColor(), radii, insets)));
         deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(title);
         Nodes.add(title);
+        
+        title.setOnMousePressed((MouseEvent event) -> {
+            xOffset = DeincraftLauncherUI.window.getX() - event.getScreenX();
+            yOffset = DeincraftLauncherUI.window.getY() - event.getScreenY();
+        });
+        
+        title.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                DeincraftLauncherUI.window.setX(event.getScreenX() + xOffset);
+                DeincraftLauncherUI.window.setY(event.getScreenY() + yOffset);
+            }
+        });
         
         background = new Rectangle();
         background.setFill(DesignHelpers.brighter(DesignHelpers.brighter(pack.getTitleColor())));
@@ -230,9 +250,16 @@ public final class ModpackView {
         if (Visible) {
             System.out.println("showing view: " + pack.getName());
         }
+        
         for (Node node: Nodes) {
             node.setVisible(Visible);
         }
+        
+        if (WIP) {
+            gray.toFront();
+            titleWIP.toFront();
+        }
+        
         gallery.startTimer();
         this.Visible = Visible;
     }
@@ -363,7 +390,7 @@ public final class ModpackView {
         
         boolean visible = pack.equals(ModpackSelector.getInstance().selectedPack);
         
-        Rectangle gray = new Rectangle();
+        gray = new Rectangle();
         gray.setFill(Color.rgb(30, 30, 30, 0.8));
         gray.setLayoutX(0);
         gray.setLayoutY(0);
@@ -375,7 +402,7 @@ public final class ModpackView {
             gray.setVisible(false);
         }
         
-        Label titleWIP = new Label();
+        titleWIP = new Label();
         titleWIP.setText("Coming soon");
         titleWIP.setFont(Font.font("Verdana", FontWeight.BOLD, 72));
         titleWIP.setTextFill(Color.ALICEBLUE);

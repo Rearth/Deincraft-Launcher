@@ -41,6 +41,8 @@ public class FXMLSheetController implements Initializable {
     
     private static FXMLSheetController instance = null;
     private static final ModpackSelector PackSelecter = ModpackSelector.getInstance();
+    private static final String imgURL = "https://onedrive.live.com/download?cid=829AE01C48100392&resid=829AE01C48100392%21112&authkey=AHzDcPh-tYrec5g";
+    
     
     public static FXMLSheetController getInstance() {
         return instance;
@@ -74,9 +76,9 @@ public class FXMLSheetController implements Initializable {
         Modpack Vanilla = new Modpack("Vanilla", vanillaImage, Color.AQUAMARINE);
         Vanilla.setWIP(true);
         Modpack Deincraft = new Modpack("Deincraft-Tekkit", DCImage, Color.LIGHTGOLDENRODYELLOW);
-        Deincraft.setInfoFileLink("https://drive.google.com/uc?export=download&id=0B4MuuPQtDKdNZkdnM1AwcGxpNzQ");
+        Deincraft.setInfoFileLink("https://onedrive.live.com/download?cid=829AE01C48100392&resid=829AE01C48100392%21115&authkey=AO1QdK9f_lrHj5c");
         Deincraft.setForgeVersion("1.7.10-10.13.4.1614-1.7.10");
-        Deincraft.setServer("46.4.75.39", 25575);
+        Deincraft.setServer("46.4.75.39", 25565);
         PackSelecter.registerModpack(Deincraft);
         PackSelecter.registerModpack(Skyfactory);
         PackSelecter.registerModpack(Vanilla);
@@ -156,15 +158,13 @@ public class FXMLSheetController implements Initializable {
     
     private void downloadScreens() {
         
-        if (new File(Config.getImagesFolder()).exists()) {
+        if (ModpackSelector.getInstance().selectedPack.getScreenshots().size() >= 2) {
             return;
-        } else {
-            new File(Config.getImagesFolder()).mkdirs();
         }
         
         System.out.println("downloading Screenshots");
         
-        String URL = "https://drive.google.com/uc?export=download&id=0B4MuuPQtDKdNOWI2RjZhZTNZejg";
+        String URL = imgURL;
         String targetPath = Config.getLauncherFolder();
         DownloadHandler.addItem(targetPath, URL, this::onImgDone);
         DownloadHandler.setTitle("Downloade Screenshots");
