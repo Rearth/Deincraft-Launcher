@@ -62,4 +62,29 @@ public class MCAuthentication {
         return "";
     }
     
+    public static String getUUID(String Username, String Password) {
+        
+        try {
+            AuthenticationResponse authResponse = OpenMCAuthenticator.authenticate(Username, Password);
+            RefreshResponse refreshResponse = OpenMCAuthenticator.refresh(authResponse.getAccessToken(), authResponse.getClientToken());
+            String UUID = authResponse.getSelectedProfile().getUUID().toString();
+            
+            System.out.println("Mc Authentication done! + UUID=" + UUID);
+            System.out.println("is valid Token:" + OpenMCAuthenticator.validate(UUID));
+            return UUID;
+            
+        } catch (RequestException | AuthenticationUnavailableException e) {
+            if (e instanceof AuthenticationUnavailableException) {
+                System.err.println("Minecraft servers unavaible");
+                return "";
+            }
+            if (e instanceof InvalidCredentialsException) {
+                System.err.println("invalid username or password");
+                return "";
+              
+            }
+        }
+        return "";
+    }
+    
 }
