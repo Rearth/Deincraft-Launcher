@@ -26,7 +26,7 @@ import javafx.util.Duration;
  *
  * @author Darkp
  */
-public class DesignHelpers { 
+public class DesignHelpers {  
     
     public static final int defaultgap = 13;
     public static final Color colorGray = Color.rgb(30, 30, 30, 0.4);
