@@ -5,7 +5,9 @@
  */
 package deincraftlauncher.start;
 
+import deincraftlauncher.IO.ZIPExtractor;
 import deincraftlauncher.IO.download.DownloadHandler;
+import deincraftlauncher.IO.download.Downloader;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.settings;
 import fr.theshark34.openauth.AuthPoints;
@@ -22,9 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -42,126 +42,50 @@ import uk.co.rx14.jmclaunchlib.auth.PasswordSupplier;
  */
 public class StartMinecraft {
     
+    private static final String nativesLink = "https://onedrive.live.com/download?cid=829AE01C48100392&resid=829AE01C48100392%21119&authkey=AF7M8TZF6MoQSkU";
+    
     public static void start(Modpack pack) {
         
         if (!hasCaches(pack)) {
-            Thread prepareThread = new Thread(){
-                @Override
-                public void run(){
-                    createCaches(pack);
-                }
-            };
-
-            prepareThread.start();
-            
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    System.out.println("timer A up, creating natives...");
-                    CacheNatives(pack);
-                    
-                    Timer timer = new Timer();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            System.out.println("timer up, fixing and starting...");
-                            fixCaches(pack.getPath() + "Cache");
-                            startMC(pack);
-                        }
-                    }, 3000);
-                }
-            }, 15000);
+            createCaches(pack);
+            fixCaches(pack.getPath() + "Cache");
+            startMC(pack);
         } else {
             startMC(pack);
         }
         
     }
     
-    /*private static void startNew(Modpack pack) {
+    public static void createCaches(Modpack pack) {
         
-        System.out.println("pack starting: " + pack.getName() + " path=" + pack.getPath());
-        System.out.println("starting with username=" + settings.getUsername() + " password=" + settings.getPassword());
-
-        //YggdrasilAuth.auth(settings.getUsername(), settings.getPassword());
-
-        LaunchTask task = new LaunchTaskBuilder()
-        .setOffline()
-        .setNetOffline()
-        .setCachesDir(Config.getCacheFolder())
-        .setForgeVersion("1.7.10", pack.getForgeVersion())
-        .setInstanceDir(pack.getPath())
-        .setUsername(settings.getUsername())
-        .setPasswordSupplier(new MCPasswordSupplier())
-        .build();
-
-        System.out.println("created launch task");
-
-        new ChangePrinter(
-            () -> "" + task.getCompletedPercentage(), 100
-        ).start();
-
-        System.out.println("creating launchspec..." + Arrays.toString(task.getRemainingTasks().toArray()));
-
-        System.out.println("current task: " + task.getCurrentTasks() + task.isStarted());
-
-        LaunchSpec spec = task.getSpec();
-
-        System.out.println("creating start Args");
-
+        System.out.println("creating caches, adding natives to download queue");
+        Downloader nativesLoader = new Downloader(nativesLink, pack.getCaches());
+        nativesLoader.start();
+        nativesLoader.setOnFinished((Downloader loader) -> {
+            onNativesDownloaded(loader, pack);
+        });
         
-        String StartArg = spec.getJavaCommandline();
-        String accessToken = MCAuthentication.getToken(settings.getUsername(), settings.getPassword());
-        
-        
-        String searchKey = "--accessToken -";
-        int TokenPos = StartArg.indexOf(searchKey) + searchKey.length();
-        
-        String partA = StartArg.substring(0, TokenPos);
-        String partB = StartArg.substring(TokenPos);
-        StartArg = partA + accessToken + partB;
-        
-        StringBuilder sb = new StringBuilder(StartArg);
-        sb.deleteCharAt(TokenPos - 1);
-        StartArg = sb.toString();
-        
-        System.out.println("Args:");
-        System.out.println(StartArg);
-        
+        System.out.println("creating assets, libs and versions...");
+        Path caches = new File(pack.getCaches()).toPath();
+        uk.co.rx14.jmclaunchlib.caches.MinecraftCaches.create(caches);
+        System.out.println("offline part done, waiting for natives");
         
         try {
-            System.out.println("starting process, java dir=" + System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe");
-            Runtime runtime = Runtime.getRuntime();
-            
-            Process p1 = runtime.exec("\"" + System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe" + "\" " + StartArg, null, new File(pack.getPath()));
-            InputStream is = p1.getInputStream();
-            int i ;
-            while ((i = is.read()) != -1) {
-                System.out.print((char)i);
-            }
-        } catch (IOException ex) {
+            //CacheNatives(pack);
+            nativesLoader.getDownloadThread().join(30000);
+        } catch (InterruptedException ex) {
             Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-    }*/
+        System.out.println("all caches done");
+    }
     
-    public static void createCaches(Modpack pack) {
-        
-        System.out.println("creating caches!");
-        LaunchTask task = new LaunchTaskBuilder()
-        //.setOffline()
-        //.setNetOffline()
-        .setCachesDir(pack.getPath() + "Cache")
-        .setForgeVersion("1.7.10", pack.getForgeVersion())
-        .setInstanceDir(pack.getPath())
-        .setUsername(settings.getUsername())
-        .setPasswordSupplier(new MCPasswordSupplier())
-        .build();
-
-        LaunchSpec spec = task.getSpec();
-        //Process run = spec.run(new File(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe").toPath());
-
-        //LaunchSpec spec = task.getSpec();
+    private static void onNativesDownloaded(Downloader loader, Modpack pack) {
+        try {
+            ZIPExtractor.extractArchive(loader.getTargetFile(), pack.getCaches());
+        } catch (Exception ex) {
+            Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public static void CacheNatives(Modpack pack) {

@@ -64,7 +64,7 @@ public class FXMLSheetController implements Initializable {
         Image infinityImage = new Image(getClass().getResource("/deincraftlauncher/Images/logo_FTBInfinity.jpg").toString());
         Image skyImage = new Image(getClass().getResource("/deincraftlauncher/Images/logo_Skyfactory.png").toString());
         Image vanillaImage = new Image(getClass().getResource("/deincraftlauncher/Images/logo_Vanilla.png").toString());
-        Image DCImage = new Image(getClass().getResource("/deincraftlauncher/Images/logo_Deincraft.png").toString());
+        Image DCImage = new Image(getClass().getResource("/deincraftlauncher/Images/logo_Minefactory.png").toString());
         
         //DCTile test = new DCTile(50, 50, file, "Text", mainPanel);
         //test.setOnClick(this::onTestClick);
@@ -75,7 +75,7 @@ public class FXMLSheetController implements Initializable {
         Skyfactory.setWIP(true);
         Modpack Vanilla = new Modpack("Vanilla", vanillaImage, Color.AQUAMARINE);
         Vanilla.setWIP(true);
-        Modpack Deincraft = new Modpack("Deincraft-Tekkit", DCImage, Color.LIGHTGOLDENRODYELLOW);
+        Modpack Deincraft = new Modpack("Minefactory", DCImage, Color.LIGHTGOLDENRODYELLOW);
         Deincraft.setInfoFileLink("https://onedrive.live.com/download?cid=829AE01C48100392&resid=829AE01C48100392%21115&authkey=AO1QdK9f_lrHj5c");
         Deincraft.setForgeVersion("1.7.10-10.13.4.1614-1.7.10");
         Deincraft.setServer("46.4.75.39", 25565);

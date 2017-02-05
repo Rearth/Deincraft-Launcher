@@ -10,7 +10,6 @@ import deincraftlauncher.IO.download.DownloadHandler;
 import static deincraftlauncher.designElements.DesignHelpers.*;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.ModpackSelector;
-import deincraftlauncher.modPacks.settings;
 import java.util.ArrayList;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -18,10 +17,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -34,8 +30,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -437,7 +431,7 @@ public final class ModpackView {
         Nodes.add(titleWIP);
         deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(titleWIP);
         if (!visible) {
-            gray.setVisible(false);
+            titleWIP.setVisible(false);
         }
     }
     

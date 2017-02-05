@@ -5,13 +5,10 @@
  */
 package deincraftlauncher.IO.download;
 
-import deincraftlauncher.designElements.DCTile;
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -161,8 +158,26 @@ public class Downloader {
         
                 System.out.println("Starting Download; Link=" + link + " saveTo=" + saveTo);
 
-                InputStream in = null; 
                 try {
+                    
+                    URL url = new URL(link);
+                    try (BufferedInputStream bis = new BufferedInputStream(url.openStream()); FileOutputStream fis = new FileOutputStream(new File(saveTo))) {
+                        
+                        byte[] buffer = new byte[16384];
+                        int count;
+                        
+                        float progress = 0;
+                        update();
+                        
+                        while((count = bis.read(buffer, 0, 16384)) != -1) {
+                            progress += count;
+                            totalProgress = progress / totalSize;
+                            fis.write(buffer, 0, count);
+                        }
+                    }
+                    
+                    
+                    /*
                     //download
                     in = new BufferedInputStream(target.openStream());
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -192,6 +207,7 @@ public class Downloader {
                     FileOutputStream fos = new FileOutputStream(saveTo);
                     fos.write(response);
                     fos.close();
+                    */
                     onFinished.call(instance);
                     onFinishedB.call(instance);
                     instance.finished = true;
@@ -200,14 +216,8 @@ public class Downloader {
                     //download fertig
                     downloadThread.interrupt();
 
-                } catch (IOException ex) {
+                } catch (Exception ex) {
                     System.out.println("Error while downloading: " + ex);
-                } finally {
-                    try {
-                        in.close();
-                    } catch (IOException ex) {
-                        System.out.println("Error while finishing Download: " + ex);
-                    }
                 }
                 
             }
@@ -306,6 +316,10 @@ public class Downloader {
     
     public String getTargetFile() {
         return saveTo;
+    }
+
+    public Thread getDownloadThread() {
+        return downloadThread;
     }
     
 }

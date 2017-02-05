@@ -394,8 +394,8 @@ public class InstallController implements Initializable {
     private void createDesktopShortcut() {
         
         try {
-            URL inputUrl = getClass().getResource("/deincraftlauncher/Images/Deincraft Launcher.exe");
-            String targetFile = System.getProperty("user.home") + File.separator +"Desktop" + File.separator + "Minefactory Launcher.exe";
+            URL inputUrl = getClass().getResource("/deincraftlauncher/Images/Minefactory_Launcher.exe");
+            String targetFile = System.getProperty("user.home") + File.separator + "Desktop" + File.separator + "Minefactory Launcher.exe";
             File dest = new File(targetFile);
             FileUtils.copyURLToFile(inputUrl, dest);
         } catch (IOException ex) {

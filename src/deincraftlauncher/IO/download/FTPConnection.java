@@ -54,6 +54,10 @@ public class FTPConnection {
     
     public static void disconnect() {
         
+        if (!connected) {
+            return;
+        }
+        
         try {
             client.logout();
             client.disconnect();

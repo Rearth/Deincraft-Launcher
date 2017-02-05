@@ -553,4 +553,8 @@ public class Modpack {
         
     }
     
+    public String getCaches() {
+        return this.getPath() + "Cache" + File.separator;
+    }
+    
 }
