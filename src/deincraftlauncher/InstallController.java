@@ -33,6 +33,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -69,7 +70,9 @@ public class InstallController implements Initializable {
     @FXML
     Label loginLabel;
     @FXML
-    public AnchorPane mainPanel;
+    AnchorPane mainPanel;
+    @FXML
+    CheckBox createDesktop;
     
     private static InstallController instance = null;
     private static final int arc = 10;
@@ -198,6 +201,9 @@ public class InstallController implements Initializable {
             folderGame = new File(targetPath + "Games");
             folderGame.mkdirs();*/
             createGameDir(targetPath);
+            if (createDesktop.isSelected()) {
+                createDesktopShortcut();
+            }
             
             popupMessage("Installation abgeschlossen. Starte Deincraft Launcher...");
             mainPanel.setVisible(false);
@@ -383,7 +389,18 @@ public class InstallController implements Initializable {
             ex.printStackTrace();
         }
         
+    }
+    
+    private void createDesktopShortcut() {
         
+        try {
+            URL inputUrl = getClass().getResource("/deincraftlauncher/Images/Deincraft Launcher.exe");
+            String targetFile = System.getProperty("user.home") + File.separator +"Desktop" + File.separator + "Minefactory Launcher.exe";
+            File dest = new File(targetFile);
+            FileUtils.copyURLToFile(inputUrl, dest);
+        } catch (IOException ex) {
+            Logger.getLogger(InstallController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }

@@ -27,6 +27,7 @@
             <Font name="Calibri Bold" size="12.0" />
          </font>
       </Label>
+      <CheckBox fx:id="createDesktop" focusTraversable="false" layoutX="185.0" layoutY="89.0" mnemonicParsing="false" selected="true" text="Desktopverknüpfung erstellen" textFill="WHITE" />
    </children>
    <opaqueInsets>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

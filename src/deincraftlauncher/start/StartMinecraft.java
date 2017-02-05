@@ -5,7 +5,10 @@
  */
 package deincraftlauncher.start;
 
+import deincraftlauncher.Config;
 import deincraftlauncher.IO.download.DownloadHandler;
+import deincraftlauncher.IO.download.FTPConnection;
+import deincraftlauncher.IO.download.FTPDownloader;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.settings;
 import fr.theshark34.openauth.AuthPoints;
@@ -28,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -38,6 +42,7 @@ import uk.co.rx14.jmclaunchlib.LaunchSpec;
 import uk.co.rx14.jmclaunchlib.LaunchTask;
 import uk.co.rx14.jmclaunchlib.LaunchTaskBuilder;
 import uk.co.rx14.jmclaunchlib.auth.PasswordSupplier;
+import uk.co.rx14.jmclaunchlib.util.ChangePrinter;
 
 /**
  *
@@ -48,14 +53,31 @@ public class StartMinecraft {
     public static void start(Modpack pack) {
         
         if (!hasCaches(pack)) {
-            createCaches(pack);
+            Thread prepareThread = new Thread(){
+                @Override
+                public void run(){
+                    createCaches(pack);
+                }
+            };
+
+            prepareThread.start();
             
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    fixCaches(pack.getPath() + "Cache");
-                    startMC(pack);
+                    System.out.println("timer A up, creating natives...");
+                    CacheNatives(pack);
+                    
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            System.out.println("timer up, fixing and starting...");
+                            fixCaches(pack.getPath() + "Cache");
+                            startMC(pack);
+                        }
+                    }, 3000);
                 }
             }, 15000);
         } else {
@@ -150,6 +172,39 @@ public class StartMinecraft {
         //LaunchSpec spec = task.getSpec();
     }
     
+    private static void CacheNatives(Modpack pack) {
+        
+        try {
+            System.out.println("creating natives");
+            LaunchTask task = new LaunchTaskBuilder()
+                    .setOffline()
+                    .setNetOffline()
+                    .setCachesDir(pack.getPath() + "Cache")
+                    .setForgeVersion("1.7.10", pack.getForgeVersion())
+                    .setInstanceDir(pack.getPath())
+                    .setUsername(settings.getUsername())
+                    .setPasswordSupplier(new MCPasswordSupplier())
+                    .build();
+            
+            
+            LaunchSpec spec = task.getSpec();
+            
+            Process run = spec.run(new File(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe").toPath());
+            
+            BufferedReader stdout = new BufferedReader(new InputStreamReader(run.getInputStream()));
+            String line;
+            
+            while ((line = stdout.readLine()) != null) {
+                System.out.println(line);
+                if (line.contains("Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker")) {
+                    run.destroyForcibly();
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public static void startMC(Modpack pack) {
         
         //http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forge-1.7.10-10.13.4.1558-1.7.10-universal.jar
@@ -161,9 +216,9 @@ public class StartMinecraft {
         //YggdrasilAuth.auth(settings.getUsername(), settings.getPassword());
 
         LaunchTask task = new LaunchTaskBuilder()
-        //.setOffline()
-        //.setNetOffline()
-        .setCachesDir(Config.getCacheFolder())
+        .setOffline()
+        .setNetOffline()
+        .setCachesDir(pack.getPath() + "Cache")
         .setForgeVersion("1.7.10", pack.getForgeVersion())
         .setInstanceDir(pack.getPath())
         .setUsername(settings.getUsername())
@@ -301,8 +356,9 @@ public class StartMinecraft {
         
         try {
             //create guava 16.0 file
-            FileUtils.deleteDirectory(new File(makePath(dir + "\\libs\\com\\google\\guava\\guava\\")));
-            String targetPath = makePath(dir + "\\libs\\com\\google\\guava\\guava\\16.0\\");
+            FileUtils.deleteDirectory(new File(dir + "/libs/com/google/guava/guava/"));
+            String targetPath = dir + "/libs/com/google/guava/guava/16.0/";
+            
             new File(targetPath).mkdirs();
             URL inputUrl = DownloadHandler.getInstance().getClass().getResource("/deincraftlauncher/Images/guava-16.0.jar");
             File dest = new File(targetPath + "guava-16.0.jar");
@@ -310,9 +366,5 @@ public class StartMinecraft {
         } catch (IOException ex) {
             Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-    private static String makePath(String path) {
-        return path.replaceAll("\\", File.separator);
     }
 }
