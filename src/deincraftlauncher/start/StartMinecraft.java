@@ -22,6 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -290,12 +293,34 @@ public class StartMinecraft {
                         pack.getView().setStartUnLocked("Start");
                     });
                 }
+                
             }
+            
+            checkAlive(launch, pack);
             
         } catch (LaunchException | AuthenticationException | IOException ex) {
             Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+    }
+    
+    private static void checkAlive(Process launch, Modpack pack) {
+        
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (!launch.isAlive()) {
+                    Platform.runLater(() -> {
+                        System.out.println("minecraft stopped, process is dead!");
+                        pack.getView().setStartLoading(false);
+                        pack.getView().setStartUnLocked("Start");
+                    });
+                } else {
+                    checkAlive(launch, pack);
+                }
+            }
+        }, 3000);
     }
     
     private static GameFolder getFolder(Modpack pack) {
@@ -310,6 +335,7 @@ public class StartMinecraft {
     }
     
     private static boolean isErrorCode(String Code) {
+        //System.out.println("checking error code for: " + Code);
         String errA = "cpw.mods.fml.relauncher.FMLSecurityManager$ExitTrappedException";
         String errB = "[Client thread/INFO]: Stopping!";
         String errC = "#@!@# Game crashed! Crash report saved to: #@!@#";
@@ -352,6 +378,17 @@ public class StartMinecraft {
             URL inputUrl = DownloadHandler.getInstance().getClass().getResource("/deincraftlauncher/Images/guava-16.0.jar");
             File dest = new File(targetPath + "guava-16.0.jar");
             FileUtils.copyURLToFile(inputUrl, dest);
+            
+            //fix Forge Multipart
+            System.out.println("fixing forge multipart if existing");
+            String targetMod = dir.replace("Cache", "mods") + File.separator + "ForgeMultipart-1.7.10-1.2.0.345-universal.jar";
+            if (new File(targetMod).exists()) {
+                String targetModPath = dir.replace("Cache", "mods") + File.separator + "1.7.10" + File.separator;
+                String targetModLocation = targetModPath + "ForgeMultipart-1.7.10-1.2.0.345-universal.jar";
+                new File(targetModPath).mkdirs();
+                new File(targetMod).renameTo(new File(targetModLocation));
+            }
+            
         } catch (IOException ex) {
             Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -278,6 +278,8 @@ public class Modpack {
                     }, 3000);
                 }
             }, 15000);
+        } else {
+            onCachingFinished();
         }
         
     }
