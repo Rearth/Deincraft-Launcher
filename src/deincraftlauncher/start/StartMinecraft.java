@@ -5,10 +5,7 @@
  */
 package deincraftlauncher.start;
 
-import deincraftlauncher.Config;
 import deincraftlauncher.IO.download.DownloadHandler;
-import deincraftlauncher.IO.download.FTPConnection;
-import deincraftlauncher.IO.download.FTPDownloader;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.settings;
 import fr.theshark34.openauth.AuthPoints;
@@ -19,19 +16,12 @@ import fr.theshark34.openauth.model.response.AuthResponse;
 import fr.theshark34.openlauncherlib.LaunchException;
 import fr.theshark34.openlauncherlib.external.ExternalLaunchProfile;
 import fr.theshark34.openlauncherlib.external.ExternalLauncher;
-import fr.theshark34.openlauncherlib.minecraft.AuthInfos;
-import fr.theshark34.openlauncherlib.minecraft.GameFolder;
-import fr.theshark34.openlauncherlib.minecraft.GameInfos;
-import fr.theshark34.openlauncherlib.minecraft.GameTweak;
-import fr.theshark34.openlauncherlib.minecraft.GameType;
-import fr.theshark34.openlauncherlib.minecraft.GameVersion;
-import fr.theshark34.openlauncherlib.minecraft.MinecraftLauncher;
+import fr.theshark34.openlauncherlib.minecraft.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -42,7 +32,6 @@ import uk.co.rx14.jmclaunchlib.LaunchSpec;
 import uk.co.rx14.jmclaunchlib.LaunchTask;
 import uk.co.rx14.jmclaunchlib.LaunchTaskBuilder;
 import uk.co.rx14.jmclaunchlib.auth.PasswordSupplier;
-import uk.co.rx14.jmclaunchlib.util.ChangePrinter;
 
 /**
  *
@@ -153,7 +142,7 @@ public class StartMinecraft {
         
     }*/
     
-    private static void createCaches(Modpack pack) {
+    public static void createCaches(Modpack pack) {
         
         System.out.println("creating caches!");
         LaunchTask task = new LaunchTaskBuilder()
@@ -172,7 +161,7 @@ public class StartMinecraft {
         //LaunchSpec spec = task.getSpec();
     }
     
-    private static void CacheNatives(Modpack pack) {
+    public static void CacheNatives(Modpack pack) {
         
         try {
             System.out.println("creating natives");
@@ -339,7 +328,7 @@ public class StartMinecraft {
         }
     }
     
-    private static boolean hasCaches(Modpack pack) {
+    public static boolean hasCaches(Modpack pack) {
         
         File cachefolder = new File(pack.getPath() + "Cache");
         
@@ -352,7 +341,7 @@ public class StartMinecraft {
         
     }
     
-    private static void fixCaches(String dir) {
+    public static void fixCaches(String dir) {
         
         try {
             //create guava 16.0 file

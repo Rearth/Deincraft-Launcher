@@ -13,6 +13,7 @@ import deincraftlauncher.IO.download.Downloader;
 import deincraftlauncher.IO.download.FTPSync;
 import deincraftlauncher.designElements.ModpackView;
 import deincraftlauncher.start.StartMinecraft;
+import static deincraftlauncher.start.StartMinecraft.hasCaches;
 import static deincraftlauncher.start.StartMinecraft.startMC;
 import java.io.File;
 import java.io.IOException;
@@ -244,13 +245,53 @@ public class Modpack {
         ModsVersionInstalled = ModsVersion;
         saveConfig();
         
+        Platform.runLater(() -> {
+            this.getView().setStartLoading(true);
+        });
+        
+        final Modpack pack = this;
+        
+        if (!hasCaches(pack)) {
+            Thread prepareThread = new Thread(){
+                @Override
+                public void run(){
+                    StartMinecraft.createCaches(pack);
+                }
+            };
+
+            prepareThread.start();
+            
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.out.println("timer A up, creating natives...");
+                    StartMinecraft.CacheNatives(pack);
+                    
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            StartMinecraft.fixCaches(pack.getPath() + "Cache");
+                            onCachingFinished();
+                        }
+                    }, 3000);
+                }
+            }, 15000);
+        }
+        
+    }
+    
+    private void onCachingFinished() {
         if (!updateAvaible()) {
             System.out.println("Finished all files for this pack, enabling start button");
             Platform.runLater(() -> {
+                this.getView().setStartLoading(false);
                 view.updateInfo();
                 view.setStartUnLocked("Start");      
             });
         }
+        
     }
     
     private void onDownloaderFinish(Downloader loader) {
