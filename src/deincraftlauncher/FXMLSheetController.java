@@ -230,7 +230,7 @@ public class FXMLSheetController implements Initializable {
         pack.setConfigVersion(texts[4]);
         pack.setConfigLink(texts[5]);
         
-        String News = "Patchnotes: " + System.getProperty("line.separator");
+        String News = new String();
         for (int i = 1; i < total.size(); i++) {
             News += total.get(i) + System.getProperty("line.separator");
         }

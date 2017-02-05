@@ -125,8 +125,8 @@ public class InstallController implements Initializable {
                 
         TextButton cancel = new TextButton(saveX, cancelY, "cancel", Color.RED, mainPanel);
         cancel.setOnClick((TextButton tile) -> {
-                cancel();
-            });
+            cancel();
+        });
         
         save = new TextButton(saveX, saveY, "Weiter", Color.GRAY, mainPanel);
         save.setFocusable(false);

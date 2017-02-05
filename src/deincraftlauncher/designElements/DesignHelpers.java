@@ -120,6 +120,8 @@ public class DesignHelpers {
         
     }
     
-            
+    public static Font getNotesFont() {
+        return Font.font("Roboto", FontWeight.SEMI_BOLD,  16);
+    }       
     
 }

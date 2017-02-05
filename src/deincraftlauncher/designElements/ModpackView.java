@@ -10,16 +10,22 @@ import deincraftlauncher.IO.download.DownloadHandler;
 import static deincraftlauncher.designElements.DesignHelpers.*;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.ModpackSelector;
+import deincraftlauncher.modPacks.settings;
 import java.util.ArrayList;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -28,6 +34,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  *
@@ -56,6 +67,14 @@ public final class ModpackView {
             radius, radius, radius, radius, radius, radius, radius, radius,
             false,  false,  false,  false,  false,  false,  false,  false
     );
+    
+    private static final int arc = 15;
+    private static final int sizeX = 600;
+    private static final int sizeY = 430;
+    private static final Color backgroundColor = Color.rgb(50, 50, 60);
+    private static final Color blueColor = Color.DARKBLUE;
+    private static final int separatorY = 60;
+    private static final int separatorSizeY = 4;
 
     private final Modpack pack;
     private final ArrayList<Node> Nodes = new ArrayList<>();
@@ -206,9 +225,14 @@ public final class ModpackView {
         patchNotes.setLayoutX(notesX + defaultgap);
         patchNotes.setLayoutY(notesY + defaultgap);
         patchNotes.setPrefSize(notesSizeX - 2 * defaultgap, notesSizeY - 2 * defaultgap);
+        patchNotes.setAlignment(Pos.TOP_LEFT);
         patchNotes.setText(pack.getNews());
         Nodes.add(patchNotes);
         deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(patchNotes);
+        patchNotes.setOnMouseClicked((MouseEvent e) -> {
+                showPatchNotes();
+            });
+        patchNotes.setFont(DesignHelpers.getNotesFont());
         
         StartText = new Label();
         StartText.setLayoutX(infoX);
@@ -415,6 +439,77 @@ public final class ModpackView {
         if (!visible) {
             gray.setVisible(false);
         }
+    }
+    
+    private void showPatchNotes() {
+        System.out.println("showing patchnotes large");
+        
+        Stage dialog = new Stage();
+        dialog.initModality(Modality.WINDOW_MODAL);
+        dialog.initStyle(StageStyle.TRANSPARENT);
+        dialog.initOwner(deincraftlauncher.DeincraftLauncherUI.window);
+        
+        AnchorPane backgroundNotes = new AnchorPane();
+        
+        Rectangle bBlack = new Rectangle();
+        bBlack.setWidth(sizeX);
+        //bBlack.setHeight(sizeY);
+        bBlack.setFill(backgroundColor);
+        bBlack.setArcHeight(arc);
+        bBlack.setArcWidth(arc);
+        backgroundNotes.getChildren().add(bBlack);
+        
+        Rectangle separator = new Rectangle();
+        separator.setWidth(sizeX);
+        separator.setHeight(separatorSizeY);
+        separator.setLayoutY(separatorY);
+        separator.setFill(blueColor);
+        backgroundNotes.getChildren().add(separator);
+        
+        
+        Label Title = new Label();
+        Title.setText("Patchnotes");
+        Title.setPrefSize(sizeX, separatorY);
+        Title.setTextFill(Color.WHITESMOKE);
+        Title.setTextAlignment(TextAlignment.CENTER);
+        Title.setFont(DesignHelpers.getFocusFont(42));
+        Title.setAlignment(Pos.CENTER);
+        backgroundNotes.getChildren().add(Title);
+        Title.setOnMouseClicked((MouseEvent e) -> {
+                hidePatchNotes(dialog);
+            });
+                
+        Label patchNotesLarge = new Label();
+        patchNotesLarge.setText(pack.getNews());
+        patchNotesLarge.setLayoutX(defaultgap);
+        patchNotesLarge.setLayoutY(separatorY + separatorSizeY + defaultgap);
+        patchNotesLarge.setPrefWidth(sizeX - 2* defaultgap);
+        patchNotesLarge.setTextFill(Color.WHITESMOKE);
+        patchNotesLarge.setAlignment(Pos.TOP_LEFT);
+        patchNotesLarge.setFont(DesignHelpers.getNotesFont());
+        backgroundNotes.getChildren().add(patchNotesLarge);
+        patchNotesLarge.setOnMouseClicked((MouseEvent e) -> {
+                hidePatchNotes(dialog);
+            });
+        
+        
+        bBlack.setHeight(sizeY);
+        
+        Scene dialogScene = new Scene(backgroundNotes, sizeX, sizeY);
+        dialog.setScene(dialogScene);
+        dialog.show();
+        
+        //System.out.println("text height: " + patchNotesLarge.heightProperty());
+        int height = patchNotesLarge.heightProperty().intValue() + separatorY + separatorSizeY;
+        bBlack.setHeight(height);
+        dialog.setHeight(height);
+        
+    }
+    
+    private void hidePatchNotes(Stage stage) {
+        System.out.println("hiding patchnotes large");
+        
+        stage.close();
     }
     
 }
