@@ -9,6 +9,7 @@ import deincraftlauncher.Config;
 import deincraftlauncher.IO.download.DownloadHandler;
 import deincraftlauncher.IO.download.Downloader;
 import deincraftlauncher.designElements.DCTile;
+import deincraftlauncher.designElements.DesignHelpers;
 import static deincraftlauncher.designElements.DesignHelpers.defaultgap;
 import java.io.File;
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class ModpackSelector {
     
     public void init() {
         pane = deincraftlauncher.FXMLSheetController.getInstance().mainPanel;
-        background.setFill(Color.LIGHTBLUE);
+        background.setFill(DesignHelpers.foreGround);
         background.setLayoutX(posX - defaultgap);
         background.setLayoutY(0);
         background.setWidth(iconSize + 2 * defaultgap);

@@ -28,10 +28,12 @@ import javafx.util.Duration;
  */
 public class DesignHelpers {
     
-    public static final int defaultgap = 3;
+    public static final int defaultgap = 13;
     public static final Color colorGray = Color.rgb(30, 30, 30, 0.4);
+    public static final Color foreGround = Color.rgb(40, 80, 154);
+    public static final Color backGround = Color.rgb(37, 42, 51);
     
-    private static final int shadowsize = 20;
+    private static final int shadowsize = 0;
     private static final double darkencolor = 0.5;
     
     public static Effect getShadowEffect() {

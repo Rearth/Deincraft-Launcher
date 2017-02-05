@@ -9,6 +9,7 @@ import deincraftlauncher.IO.FileUtils;
 import deincraftlauncher.IO.ZIPExtractor;
 import deincraftlauncher.IO.download.DownloadHandler;
 import deincraftlauncher.IO.download.Downloader;
+import deincraftlauncher.designElements.DesignHelpers;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.ModpackSelector;
 import deincraftlauncher.modPacks.settings;
@@ -30,6 +31,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  *
@@ -52,10 +54,13 @@ public class FXMLSheetController implements Initializable {
     
     @FXML
     public AnchorPane mainPanel;
+    @FXML
+    public Rectangle backgroundColor;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         instance = this;
+        //backgroundColor.setFill(DesignHelpers.colorGray);
         
         loadConfig();
         settings.loadFromFile();
@@ -69,13 +74,15 @@ public class FXMLSheetController implements Initializable {
         //DCTile test = new DCTile(50, 50, file, "Text", mainPanel);
         //test.setOnClick(this::onTestClick);
         //System.out.println(test.toString());
-        Modpack FTBInfinity = new Modpack("FTBInfinity", infinityImage, Color.GRAY);
+        
+        Color packColor = DesignHelpers.foreGround;
+        Modpack FTBInfinity = new Modpack("FTBInfinity", infinityImage, packColor);
         FTBInfinity.setWIP(true);
-        Modpack Skyfactory = new Modpack("Skyfactory", skyImage, Color.LIGHTBLUE);
+        Modpack Skyfactory = new Modpack("Skyfactory", skyImage, packColor);
         Skyfactory.setWIP(true);
-        Modpack Vanilla = new Modpack("Vanilla", vanillaImage, Color.AQUAMARINE);
+        Modpack Vanilla = new Modpack("Vanilla", vanillaImage, packColor);
         Vanilla.setWIP(true);
-        Modpack Deincraft = new Modpack("Minefactory", DCImage, Color.LIGHTGOLDENRODYELLOW);
+        Modpack Deincraft = new Modpack("Minefactory", DCImage, packColor);
         Deincraft.setInfoFileLink("https://onedrive.live.com/download?cid=829AE01C48100392&resid=829AE01C48100392%21115&authkey=AO1QdK9f_lrHj5c");
         Deincraft.setForgeVersion("1.7.10-10.13.4.1614-1.7.10");
         Deincraft.setServer("46.4.75.39", 25565);
