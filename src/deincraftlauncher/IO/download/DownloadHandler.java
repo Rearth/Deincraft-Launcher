@@ -10,6 +10,8 @@ import deincraftlauncher.designElements.DesignHelpers;
 import static deincraftlauncher.designElements.DesignHelpers.defaultgap;
 import static deincraftlauncher.designElements.DesignHelpers.getSmallShadow;
 import static deincraftlauncher.designElements.DesignHelpers.playFadeAnim;
+import deincraftlauncher.designElements.ModpackView;
+import static deincraftlauncher.designElements.ModpackView.notesY;
 import deincraftlauncher.designElements.ProgressBar;
 import deincraftlauncher.modPacks.ModpackSelector;
 import java.io.InputStream;
@@ -32,7 +34,7 @@ import javafx.scene.text.TextAlignment;
 public class DownloadHandler {
     
     private static final DownloadHandler instance = new DownloadHandler();
-    public static final int downloaderHeight = 100;
+    public static int downloaderHeight;
     
     private final ArrayList<Downloader> prepared = new ArrayList<>();
     private final ArrayList<Downloader> done = new ArrayList<>();
@@ -54,6 +56,8 @@ public class DownloadHandler {
     private static boolean active = false;
     private static boolean blocked = false;
     private static boolean startBlocked = false;
+    
+    private int notesSizeY;
     
     public static DownloadHandler getInstance() {
         return instance;
@@ -245,6 +249,9 @@ public class DownloadHandler {
     
     private void showDownloader() {
         
+        notesSizeY = (int) deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getPrefHeight() - notesY - defaultgap;
+        downloaderHeight = notesSizeY;
+        
         if (visible) {
             return;
         }
@@ -252,15 +259,15 @@ public class DownloadHandler {
         System.out.println("showing downloader");
         visible = true;
         
-        ModpackSelector.getInstance().shortenLabels();
+        //ModpackSelector.getInstance().shortenLabels();
         AnchorPane pane = deincraftlauncher.FXMLSheetController.getInstance().mainPanel;
         
         background = new Rectangle();
-        background.setFill(Color.GRAY);
-        background.setLayoutX(defaultgap);
-        background.setLayoutY(454 - downloaderHeight + defaultgap);
-        background.setWidth(pane.getPrefWidth() - defaultgap * 3 - (pane.getPrefWidth() - ModpackSelector.posX));
-        background.setHeight(downloaderHeight - defaultgap * 2);
+        background.setFill(DesignHelpers.foreGround);
+        background.setLayoutX(ModpackView.notesX);
+        background.setLayoutY(ModpackView.notesY);
+        background.setWidth(ModpackView.notesSizeX);
+        background.setHeight(notesSizeY);
         background.setEffect(getSmallShadow());
         Nodes.add(background);
         
@@ -268,29 +275,29 @@ public class DownloadHandler {
         title = new Label();
         title.setText(titleName);
         title.setFont(DesignHelpers.getLabelFont());
-        title.setLayoutX(defaultgap * 2);
-        title.setLayoutY(background.getLayoutY() + defaultgap);
+        title.setLayoutX(ModpackView.notesX + 3);
+        title.setLayoutY(background.getLayoutY() + 3);
         Nodes.add(title);
         
         totalProg = new Label();
         totalProg.setWrapText(true);
         totalProg.setTextAlignment(TextAlignment.CENTER);
         totalProg.setAlignment(Pos.CENTER_RIGHT);
-        totalProg.setPrefWidth(background.getWidth() - defaultgap * 2);
+        totalProg.setPrefWidth(background.getWidth() - 3 * 2);
         totalProg.setText("Datei " + (doneNum + 1) + "/" + numOfElems + ", 0/" + calcToMB(totalSize) + " MB");
         totalProg.setFont(DesignHelpers.getLabelFont());
-        totalProg.setLayoutX(defaultgap * 2);
-        totalProg.setLayoutY(background.getLayoutY() + defaultgap);
+        totalProg.setLayoutX(ModpackView.notesX + 3);
+        totalProg.setLayoutY(background.getLayoutY() + 3);
         Nodes.add(totalProg);
         
         curProg = new Label();
         curProg.setWrapText(true);
         curProg.setTextAlignment(TextAlignment.CENTER);
         curProg.setAlignment(Pos.CENTER_RIGHT);
-        curProg.setPrefWidth(background.getWidth() - defaultgap * 2);
+        curProg.setPrefWidth(background.getWidth() - 3 * 2);
         curProg.setText("Examplefile, 1/3 MB");
         curProg.setFont(DesignHelpers.getLabelFont());
-        curProg.setLayoutX(defaultgap * 2);
+        curProg.setLayoutX(ModpackView.notesX + 3);
         curProg.setLayoutY(background.getLayoutY() + downloaderHeight * 0.46);
         Nodes.add(curProg);
         
@@ -299,9 +306,10 @@ public class DownloadHandler {
             pane.getChildren().add(node);
             playFadeAnim(node, false);
         }
-        top = new ProgressBar(defaultgap * 2, background.getLayoutY() + defaultgap * 3 + 12, background.getWidth() - 3 * defaultgap, 24);
+        
+        top = new ProgressBar(ModpackView.notesX + 3, background.getLayoutY() + defaultgap * 1.8, background.getWidth() - 2 * 3, 24);
         Nodes.addAll(top.getNodes());
-        bottom = new ProgressBar(defaultgap * 2, curProg.getLayoutY() + 21, background.getWidth() - 3 * defaultgap, 24);
+        bottom = new ProgressBar(ModpackView.notesX + 3, background.getLayoutY() + defaultgap * 1.5 + 25, background.getWidth() - 2 * 3, 24);
         Nodes.addAll(bottom.getNodes());
         
     }
@@ -319,7 +327,7 @@ public class DownloadHandler {
         for (final Node node : Nodes) {
             Platform.runLater(() -> {
                 pane.getChildren().remove(node);
-                ModpackSelector.getInstance().normalLabels();
+                //ModpackSelector.getInstance().normalLabels();
                 node.setVisible(false);
             });
         }

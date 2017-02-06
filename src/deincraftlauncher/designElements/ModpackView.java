@@ -12,7 +12,6 @@ import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.ModpackSelector;
 import java.util.ArrayList;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -40,21 +39,21 @@ import javafx.stage.StageStyle;
  */
 public final class ModpackView {
     
-    private static final int galleryX = defaultgap;
-    private static final int galleryY = 80;
-    private static final int gallerySizeX = 400;
-    private static final int gallerySizeY = 210;
-    private static final int infoX = galleryX + gallerySizeX + (int) (defaultgap * 1.5);
-    private static final int stateY = 90;
+    private static final int galleryX = defaultgap * 3;
+    private static final int galleryY = 110;
+    private static final int gallerySizeX = 350 - galleryX;
+    private static final int gallerySizeY = 190;
+    private static final int infoX = galleryX + gallerySizeX + (int) (defaultgap * 2.1);
+    private static final int stateY = galleryY + (int) (defaultgap * 0.6);
     private static final int playersY = stateY + 25;
-    private static final int notesX = defaultgap;
-    private static final int notesY = galleryY + gallerySizeY + defaultgap;
+    public static final int notesX = defaultgap;
+    public static final int notesY = galleryY + gallerySizeY + defaultgap;
     private static final int versionY = playersY + 25;
-    private static final int startSizeX = ModpackSelector.posX - galleryX - gallerySizeX - defaultgap * 3;
-    private static final int startSizeY = 100;
+    private static final int startSizeX = ModpackSelector.posX - galleryX - gallerySizeX - defaultgap * 6;
+    private static final int startSizeY = 75;
     private static final int startX = infoX;
-    private static final int startY = galleryY + gallerySizeY - startSizeY - defaultgap + 25;
-    private static final int notesSizeX = ModpackSelector.posX - defaultgap * 2;
+    private static final int startY = galleryY + gallerySizeY - startSizeY - defaultgap;
+    public static final int notesSizeX = ModpackSelector.posX - defaultgap * 3;
     private static final int radius = 0;
     private static final Insets insets =  new Insets(0, 0, 0, 0);
     private static final CornerRadii radii = new CornerRadii(
@@ -97,6 +96,7 @@ public final class ModpackView {
     private static double yOffset = 0;
     
     private boolean Visible = false;
+    private boolean Loading = false;
     
     public ModpackView(Modpack pack) {
         System.out.println("creating view for: " + pack.getName());
@@ -108,10 +108,10 @@ public final class ModpackView {
         
         title = new Label();
         title.setText(pack.getName());
-        title.setLayoutX(0);
-        title.setLayoutY(0);
-        title.setPrefHeight(galleryY - defaultgap);
-        title.setPrefWidth(ModpackSelector.posX - defaultgap);
+        title.setLayoutX(defaultgap);
+        title.setLayoutY(defaultgap);
+        title.setPrefHeight(galleryY - defaultgap * 2);
+        title.setPrefWidth(ModpackSelector.posX - defaultgap * 3);
         title.setAlignment(Pos.CENTER);
         title.setFont(getTitleFont());
         title.setEffect(DesignHelpers.getShadowEffect(50));
@@ -129,11 +129,13 @@ public final class ModpackView {
             DeincraftLauncherUI.window.setY(event.getScreenY() + yOffset);
         });
         
+        
+        //right rectangle
         background = new Rectangle();
         background.setFill(pack.getTitleColor());
-        background.setLayoutX(galleryX + gallerySizeX + defaultgap);
+        background.setLayoutX(galleryX + gallerySizeX + defaultgap * 1.5);
         background.setLayoutY(galleryY);
-        background.setWidth(ModpackSelector.posX - galleryX - gallerySizeX - defaultgap * 2);
+        background.setWidth(ModpackSelector.posX - galleryX - gallerySizeX - defaultgap * 5);
         background.setHeight(gallerySizeY);
         background.setEffect(getSmallShadow());
         Nodes.add(background);
@@ -180,7 +182,7 @@ public final class ModpackView {
         playersInfoR.setWrapText(true);
         playersInfoR.setLayoutX(infoX);
         playersInfoR.setLayoutY(playersY);
-        playersInfoR.setPrefWidth(ModpackSelector.posX - infoX - defaultgap * 1.5);
+        playersInfoR.setPrefWidth(startSizeX);
         playersInfoR.setTextAlignment(TextAlignment.RIGHT);
         playersInfoR.setAlignment(Pos.CENTER_RIGHT);
         playersInfoR.setText(pack.getPlayersOnline() + "/" + pack.getMaxPlayers());
@@ -192,7 +194,7 @@ public final class ModpackView {
         versionR.setWrapText(true);
         versionR.setLayoutX(infoX);
         versionR.setLayoutY(versionY);
-        versionR.setPrefWidth(ModpackSelector.posX - infoX - defaultgap * 1.5);
+        versionR.setPrefWidth(startSizeX);
         versionR.setTextAlignment(TextAlignment.RIGHT);
         versionR.setAlignment(Pos.CENTER_RIGHT);
         versionR.setText(pack.getVersion());
@@ -203,7 +205,7 @@ public final class ModpackView {
         serverStateR = new Label();
         serverStateR.setLayoutX(infoX);
         serverStateR.setLayoutY(stateY);
-        serverStateR.setPrefWidth(ModpackSelector.posX - infoX - defaultgap * 1.5);
+        serverStateR.setPrefWidth(startSizeX);
         serverStateR.setTextAlignment(TextAlignment.RIGHT);
         serverStateR.setAlignment(Pos.CENTER_RIGHT);
         serverStateR.setFont(getLabelFont());
@@ -229,7 +231,7 @@ public final class ModpackView {
         StartText.setLayoutX(infoX);
         StartText.setLayoutY(startY);
         StartText.setPrefWidth(startSizeX);
-        StartText.setPrefHeight(startSizeY - 25);
+        StartText.setPrefHeight(startSizeY);
         StartText.setTextAlignment(TextAlignment.CENTER);
         StartText.setAlignment(Pos.CENTER);
         StartText.setFont(getFocusFont());
@@ -273,6 +275,10 @@ public final class ModpackView {
         if (WIP) {
             gray.toFront();
             titleWIP.toFront();
+        }
+        
+        if (Loading) {
+            setStartVisible(false);
         }
         
         gallery.startTimer();
@@ -380,6 +386,7 @@ public final class ModpackView {
     }
     
     public void setStartLoading(boolean state) {
+        this.Loading = state;
         
         setStartVisible(!state);
         
@@ -409,7 +416,7 @@ public final class ModpackView {
         gray.setFill(Color.rgb(30, 30, 30, 0.8));
         gray.setLayoutX(0);
         gray.setLayoutY(0);
-        gray.setWidth(ModpackSelector.posX);
+        gray.setWidth(ModpackSelector.posX - defaultgap);
         gray.setHeight(deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getPrefHeight());
         Nodes.add(gray);
         deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(gray);
@@ -421,7 +428,7 @@ public final class ModpackView {
         titleWIP.setText("Coming soon");
         titleWIP.setFont(Font.font("Verdana", FontWeight.BOLD, 72));
         titleWIP.setTextFill(Color.ALICEBLUE);
-        titleWIP.setPrefWidth(ModpackSelector.posX);
+        titleWIP.setPrefWidth(ModpackSelector.posX - defaultgap);
         titleWIP.setPrefHeight(deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getPrefHeight());
         titleWIP.setAlignment(Pos.CENTER);
         titleWIP.setTextAlignment(TextAlignment.CENTER);

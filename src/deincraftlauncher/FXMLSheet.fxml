@@ -9,6 +9,6 @@
 
 <AnchorPane id="AnchorPane" fx:id="mainPanel" prefHeight="454.0" prefWidth="644.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="deincraftlauncher.FXMLSheetController">
    <children>
-      <Rectangle fx:id="backgroundColor" arcHeight="5.0" arcWidth="5.0" fill="#252a33" height="454.0" stroke="BLACK" strokeType="INSIDE" width="644.0" />
+      <Rectangle fx:id="backgroundColor" fill="#252a33" height="454.0" stroke="BLACK" strokeType="INSIDE" width="644.0" />
    </children>
 </AnchorPane>

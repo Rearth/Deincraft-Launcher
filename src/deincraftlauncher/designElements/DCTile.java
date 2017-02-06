@@ -35,13 +35,9 @@ import javafx.util.Duration;
  */
 public class DCTile {
 
-    private static final int textheight = 26;
-    private static final Font font = Font.font("Carlito", FontWeight.BOLD, 22);
-    private static final double scaleTo = 1.05;
+    private static final double scaleTo = 1.1;
     
     private final ImageView imageLabel;
-    private final Label textLabel;
-    private final Rectangle background;
     private Function onClick;
     private Function onFocus;
     
@@ -51,13 +47,11 @@ public class DCTile {
     private Image image;
     private int width;
     private String Text;
-    private boolean textonTop = false;
-    private boolean focused = false;    
-    private Color backgroundColor = Color.WHITE;
+    private boolean focused = false;
     private String Name = "";
     private boolean focusable = true;
     
-    public DCTile(int posX, int posY, int width, int height, Image imagefile, String Text, Pane pane) {
+    public DCTile(int posX, int posY, int width, int height, Image imagefile, Pane pane) {
         this.posX = posX;
         this.posY = posY;
         this.height = height;
@@ -65,20 +59,6 @@ public class DCTile {
         this.width = width;
         this.Text = Text;
         
-        if (Text == null || Text.equals("")) {
-            height -= textheight;
-            this.height -= textheight;
-        }
-        
-        background = new Rectangle();
-        background.setFill(backgroundColor);
-        background.setHeight(height);
-        background.setWidth(width);
-        background.setLayoutX(posX);
-        background.setLayoutY(posY);
-        background.setEffect(DesignHelpers.getShadowEffect());
-        
-        pane.getChildren().add(background);
         
         imageLabel = new ImageView();
         if (imagefile != null) {
@@ -101,29 +81,6 @@ public class DCTile {
             });
         }
         
-        textLabel = new Label();
-        if (Text != null && !Text.equals("")) {
-            textLabel.setText(Text);
-            textLabel.setLayoutX(posX);
-            textLabel.setLayoutY(posY + height - textheight - 5);
-            textLabel.setPrefSize(width, textheight);
-            textLabel.setFont(font);
-            textLabel.setTextAlignment(TextAlignment.CENTER);
-            textLabel.setAlignment(Pos.CENTER);
-            pane.getChildren().add(textLabel);
-            textLabel.setVisible(true);
-            
-            textLabel.setOnMouseExited((MouseEvent e) -> {
-                handleHover(false, e);
-            });
-            textLabel.setOnMouseEntered((MouseEvent e) -> {
-                handleHover(true, e);
-            });
-            textLabel.setOnMouseClicked((MouseEvent e) -> {
-                handleClick(e);
-            });
-        }
-        
         onClick = (DCTile tile) -> this.noClick();
         onFocus = (DCTile tile) -> this.noClick();
         
@@ -133,28 +90,18 @@ public class DCTile {
         System.out.println("no click handler set for: " + this.toString());
     }
     
-    public DCTile(int posX, int posY, Image imagefile, String Text, Pane pane) {
-        this (posX, posY, (int) imagefile.getWidth(), (int) imagefile.getHeight() + textheight, imagefile, Text, pane);
-        
-    }
-    
     public DCTile(int posX, int posY, int size, Image imagefile, Pane pane) {
-        this (posX, posY, size, size + textheight, imagefile, "", pane);
-        
-    }
-    
-    public DCTile(int posX, int posY, int sizeX, int sizeY, Image imagefile, Pane pane) {
-        this (posX, posY, sizeX, sizeY, imagefile, "", pane);
+        this (posX, posY, size, size, imagefile, pane);
         
     }
     
     public DCTile(int posX, int posY, Image imagefile, Pane pane) {
-        this (posX, posY, (int) imagefile.getWidth(), (int) imagefile.getHeight(), imagefile, "", pane);
+        this (posX, posY, (int) imagefile.getWidth(), (int) imagefile.getHeight(), imagefile, pane);
         
     }
     
     public DCTile(int posX, int posY, Pane pane) {
-        this (posX, posY, 0, 0, null, "", pane);
+        this (posX, posY, 0, 0, null, pane);
         
     }
 
@@ -165,7 +112,6 @@ public class DCTile {
     public void setPosX(int posX) {
         this.posX = posX;
         imageLabel.setLayoutX(posX);
-        textLabel.setLayoutX(posX);
     }
 
     public int getPosY() {
@@ -175,10 +121,6 @@ public class DCTile {
     public void setPosY(int posY) {
         this.posY = posY;
         imageLabel.setLayoutY(posY);
-        textLabel.setLayoutY(posY + height - textheight - 4);
-        if (textonTop) {
-            textLabel.setLayoutY(textLabel.getLayoutY() - 7 - textheight);
-        }
     }
 
     public int getHeight() {
@@ -186,7 +128,6 @@ public class DCTile {
     }
 
     private void setHeight(int height) {
-        background.setHeight(height);
         this.height = height;
     }
 
@@ -196,12 +137,8 @@ public class DCTile {
         }
         
         width = (int) image.getWidth();
-        height = (int) image.getHeight() + textheight;
+        height = (int) image.getHeight();
         
-        if (Text != null && !Text.equals("")) {
-            textLabel.setLayoutY(posY + height - textheight - 4);
-            textLabel.setPrefSize(width, textheight);
-        }
     }
 
     public int getWidth() {
@@ -218,23 +155,10 @@ public class DCTile {
 
     public void setText(String Text) {
         this.Text = Text;
-        textLabel.setText(Text);
     }
     
     public void setVisible(boolean state) {
         imageLabel.setVisible(state);
-        textLabel.setVisible(state);
-        background.setVisible(state);
-    }
-    
-    public void setTextOnTop() {
-        if (textonTop || Text == null || "".equals(Text)) {
-            return;
-        }
-        textLabel.setLayoutY(textLabel.getLayoutY() - 7 - textheight);
-        setHeight(getHeight() - textheight - 4);
-        textonTop = true;
-        
     }
 
     @Override
@@ -331,9 +255,7 @@ public class DCTile {
         AnimPlaying = true;
         
         ArrayList<Node> node = new ArrayList<>();
-        node.add(textLabel);
         node.add(imageLabel);
-        node.add(background);
         
         for (Node Elem : node) {
             ScaleTransition scaleanim = new ScaleTransition(Duration.millis(time), Elem);
@@ -345,20 +267,6 @@ public class DCTile {
             scaleanim.setAutoReverse(true);
             scaleanim.play();
         }
-        
-        TranslateTransition tt = new TranslateTransition(Duration.millis(time), textLabel);
-        tt.setByX(0);
-        tt.setByY(textheight * 0.15);
-        if (from > to) {
-            tt.setByY(-textheight * 0.15);
-        }
-        tt.setCycleCount(1);
-        tt.setAutoReverse(true);
-        tt.play();
-        tt.setOnFinished((ActionEvent event) -> {
-                AnimPlaying = false;
-                //System.out.println(MouseInfo.getPointerInfo().getLocation());
-            });
         
     }
     
@@ -385,8 +293,6 @@ public class DCTile {
     
     public void setBackgroundColor(Color color) {
         
-        backgroundColor = color;
-        background.setFill(color);
         if (color.equals(Color.TRANSPARENT)) {
             imageLabel.setEffect(getShadowEffect());
         }
@@ -415,19 +321,12 @@ public class DCTile {
     }
 
     public void setShadow(boolean state) {
-        if (state) {
-            background.setEffect(DesignHelpers.getShadowEffect());
-        } else {
-            System.out.println("removing shadow");
-            background.setEffect(DesignHelpers.getShadowEffect(0));
-        }
+        //removeThis
     }
     
     public ArrayList<Node> getNodes() {
         ArrayList<Node> Nodes = new ArrayList<>();
         Nodes.add(imageLabel);
-        Nodes.add(textLabel);
-        Nodes.add(background);
         
         return Nodes;
     }

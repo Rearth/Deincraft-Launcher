@@ -30,7 +30,7 @@ public class DesignHelpers {
     
     public static final int defaultgap = 13;
     public static final Color colorGray = Color.rgb(30, 30, 30, 0.4);
-    public static final Color foreGround = Color.rgb(40, 80, 154);
+    public static final Color foreGround = Color.rgb(40, 80, 140);
     public static final Color backGround = Color.rgb(37, 42, 51);
     
     private static final int shadowsize = 0;

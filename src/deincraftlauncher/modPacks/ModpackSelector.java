@@ -5,13 +5,9 @@
  */
 package deincraftlauncher.modPacks;
 
-import deincraftlauncher.Config;
-import deincraftlauncher.IO.download.DownloadHandler;
-import deincraftlauncher.IO.download.Downloader;
 import deincraftlauncher.designElements.DCTile;
 import deincraftlauncher.designElements.DesignHelpers;
 import static deincraftlauncher.designElements.DesignHelpers.defaultgap;
-import java.io.File;
 import java.util.ArrayList;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
@@ -27,9 +23,11 @@ public class ModpackSelector {
     
     private AnchorPane pane = null;
     private static final ModpackSelector instance = new ModpackSelector();
-    private static final int iconSize = 84;
+    private static final int iconSize = 74;
     public static final int posX = 644 - iconSize - defaultgap;
-    private static final int topGap = 37;
+    private static final int topGap = 38;
+    private static final int exitSize = 40;
+    private static final int optionHeight = 60;
     
     private final ArrayList<Modpack> Modpacks = new ArrayList<>();
     private final ArrayList<DCTile> Tiles = new ArrayList<>();
@@ -61,7 +59,7 @@ public class ModpackSelector {
     public void registerModpack(Modpack modpack) {
         Modpacks.add(modpack);
         
-        DCTile tile = new DCTile(posX, calcY(freeY()), 84, modpack.getImage(), pane);
+        DCTile tile = new DCTile(posX, calcY(freeY()), iconSize, modpack.getImage(), pane);
         Tiles.add(tile);
         tile.setOnFocus(this::packFocused);
         tile.setOnClick(this::selectPack);
@@ -76,7 +74,7 @@ public class ModpackSelector {
     }
     
     private int calcY(int index) {
-        return defaultgap + defaultgap * 2 * index + iconSize * index + topGap;
+        return defaultgap + defaultgap * index + iconSize * index + topGap;
     }
     
     private int freeY() {
@@ -116,21 +114,22 @@ public class ModpackSelector {
     }
     
     public void addEnds() {
-        
+                
         Image exitImg = new Image(getClass().getResource("/deincraftlauncher/Images/exit.png").toString());
-        DCTile exit = new DCTile(ModpackSelector.posX  + 50, defaultgap, 34, exitImg, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
+        DCTile exit = new DCTile(ModpackSelector.posX + iconSize + 1 * defaultgap - exitSize, 0, exitSize, exitImg, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
         exit.setBackgroundColor(Color.TRANSPARENT);
         exit.setOnClick(this::handleExit);
         //exit.setShadow(false);
         
         Image minimizeImg = new Image(getClass().getResource("/deincraftlauncher/Images/minimize.png").toString());
-        DCTile minimize = new DCTile(ModpackSelector.posX, defaultgap, 59 - 2 * defaultgap - 7, 59 + 1, minimizeImg, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
+        DCTile minimize = new DCTile(ModpackSelector.posX - defaultgap, 0, (ModpackSelector.posX + iconSize + 1 * defaultgap - exitSize) - (ModpackSelector.posX - defaultgap) - defaultgap / 2, exitSize, minimizeImg, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
         minimize.setBackgroundColor(Color.TRANSPARENT);
         minimize.setOnClick(this::handleMinimize);
         //minimize.setShadow(false);
         
+        
         Image optImg = new Image(getClass().getResource("/deincraftlauncher/Images/Settings-Tile.png").toString());
-        DCTile opt = new DCTile(ModpackSelector.posX, getBottomEnd() + defaultgap, iconSize, 80, optImg, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
+        DCTile opt = new DCTile(ModpackSelector.posX - defaultgap, (int) pane.getPrefHeight() - optionHeight, iconSize + 2 * defaultgap, optionHeight, optImg, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
         opt.setBackgroundColor(Color.TRANSPARENT);
         opt.setOnClick(this::handleOptionClick);
         System.out.println("Dimensions:" + opt.getHeight() + " | " + opt.getWidth());

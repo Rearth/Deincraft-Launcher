@@ -42,21 +42,14 @@ import uk.co.rx14.jmclaunchlib.auth.PasswordSupplier;
  */
 public class StartMinecraft {
     
-    private static final String nativesLink = "https://onedrive.live.com/download?cid=829AE01C48100392&resid=829AE01C48100392%21119&authkey=AF7M8TZF6MoQSkU";
     
     public static void start(Modpack pack) {
         
-        if (!hasCaches(pack)) {
-            createCaches(pack);
-            fixCaches(pack.getPath() + "Cache");
-            startMC(pack);
-        } else {
-            startMC(pack);
-        }
+        startMC(pack);
         
     }
     
-    public static void createCaches(Modpack pack) {
+    /*public static void createCaches(Modpack pack) {
         
         System.out.println("creating caches, adding natives to download queue");
         Downloader nativesLoader = new Downloader(nativesLink, pack.getCaches());
@@ -119,7 +112,7 @@ public class StartMinecraft {
         } catch (IOException ex) {
             Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }*/
     
     public static void startMC(Modpack pack) {
         

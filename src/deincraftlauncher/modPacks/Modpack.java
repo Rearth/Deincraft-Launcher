@@ -14,11 +14,8 @@ import deincraftlauncher.IO.download.FTPSync;
 import deincraftlauncher.designElements.ModpackView;
 import deincraftlauncher.start.StartMinecraft;
 import static deincraftlauncher.start.StartMinecraft.hasCaches;
-import static deincraftlauncher.start.StartMinecraft.startMC;
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Timer;
@@ -36,6 +33,9 @@ import query.QueryResponse;
  * @author Darkp
  */
 public class Modpack {
+    
+    //works only for 1.7.10
+    private static final String CacheLink = "https://onedrive.live.com/download?cid=829AE01C48100392&resid=829AE01C48100392%21121&authkey=AKFExpNZ54gYQLc";
 
     private final String Name;
     private final Image image;
@@ -67,10 +67,12 @@ public class Modpack {
     private String MainVersionInstalled = "0.0.0";
     private String MainLink;
     private String News = "Downloade Patchnotes...";
+    
     public Modpack(String Name, Image image, Color color) {
         this.Name = Name;
         this.image = image;
         this.titleColor = color;
+        path = Config.getGameFolder() + this.Name + File.separator;
         
         try {
             File Images = new File(Config.getImagesFolder() + Name + File.separator);
@@ -94,7 +96,6 @@ public class Modpack {
         loadFromConfig();
         
         view = new ModpackView(this);
-        path = Config.getGameFolder() + this.Name + File.separator;
         
         
     }
@@ -168,9 +169,9 @@ public class Modpack {
         System.out.println(MainVersion);
         System.out.println(ModsVersion);
         System.out.println(ConfigVersion);
+        System.out.println(ConfigVersionInstalled);
         System.out.println(MainVersionInstalled);
         System.out.println(ModsVersionInstalled);
-        System.out.println(ConfigVersionInstalled);
         
         return !(MainVersion.equals(MainVersionInstalled) && ModsVersion.equals(ModsVersionInstalled) && ConfigVersion.equals(ConfigVersionInstalled));
     }
@@ -234,6 +235,11 @@ public class Modpack {
                 DownloadHandler.setTitle("Downloade " + Name);
                 DownloadHandler.start();
             }
+            if (!hasCaches(this)) {
+                DownloadHandler.addItem(this.getCaches(), CacheLink, this::onCachesFinish);
+                DownloadHandler.setTitle("Downloade " + Name);
+                DownloadHandler.start();
+            }
         } else {
             startPack();
         }
@@ -248,43 +254,7 @@ public class Modpack {
         Platform.runLater(() -> {
             this.getView().setStartLoading(true);
         });
-        
-        final Modpack pack = this;
-        
-        if (!hasCaches(pack)) {
-            Thread prepareThread = new Thread(){
-                @Override
-                public void run(){
-                    StartMinecraft.createCaches(pack);
-                }
-            };
-
-            prepareThread.start();
-            
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    System.out.println("timer A up, creating natives...");
-                    StartMinecraft.CacheNatives(pack);
-                    
-                    Timer timer = new Timer();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            StartMinecraft.fixCaches(pack.getPath() + "Cache");
-                            onCachingFinished();
-                        }
-                    }, 3000);
-                }
-            }, 15000);
-        } else {
-            onCachingFinished();
-        }
-        
-    }
-    
-    private void onCachingFinished() {
+                
         if (!updateAvaible()) {
             System.out.println("Finished all files for this pack, enabling start button");
             Platform.runLater(() -> {
@@ -293,7 +263,24 @@ public class Modpack {
                 view.setStartUnLocked("Start");      
             });
         }
+    }
+    
+    private void onCachesFinish(Downloader loader) {
+        System.out.println("Finished Downloading Caches");
         
+        try {
+            ZIPExtractor.extractArchive(loader.getTargetFile(), this.getCaches());
+        } catch (Exception ex) {
+            Logger.getLogger(Modpack.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        if (!updateAvaible()) {
+            System.out.println("Finished all files for this pack, enabling start button");
+            Platform.runLater(() -> {
+                view.updateInfo();
+                view.setStartUnLocked("Start");      
+            });
+        }
     }
     
     private void onDownloaderFinish(Downloader loader) {
