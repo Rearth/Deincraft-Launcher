@@ -6,10 +6,18 @@
 package deincraftlauncher.designElements;
 
 import deincraftlauncher.IO.download.DownloadHandler;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.layout.VBox;
@@ -107,23 +115,38 @@ public class DesignHelpers {
         ft.play();
     }
     
-    public static void popupMessage(String Text) {
-        Platform.runLater(() -> {
-            Stage dialog = new Stage();
-            dialog.initModality(Modality.APPLICATION_MODAL);
-            dialog.initStyle(StageStyle.UTILITY);
-            dialog.initOwner(deincraftlauncher.DeincraftLauncherUI.window);
-            VBox dialogVbox = new VBox(20);
-            dialogVbox.getChildren().add(new Text(Text));
-            Scene dialogScene = new Scene(dialogVbox, 300, 40);
-            dialog.setScene(dialogScene);
-            dialog.show();               
-        });
-        
-    }
-    
     public static Font getNotesFont() {
         return Font.font("Roboto", FontWeight.SEMI_BOLD,  16);
-    }       
+    }   
+
+    public static void popupMessage(String text) {
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("Benachrichtigung:");
+        alert.setContentText(text);
+        alert.initModality(Modality.WINDOW_MODAL);
+        alert.initStyle(StageStyle.UNDECORATED);
+        alert.initOwner(deincraftlauncher.DeincraftLauncherUI.window);
+        alert.show();
+    }    
+    
+    public static void popupMessage(String text, String Link) {
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("Benachrichtigung:");
+        alert.setContentText(text);
+        alert.initModality(Modality.WINDOW_MODAL);
+        alert.initStyle(StageStyle.UNDECORATED);
+        alert.initOwner(deincraftlauncher.DeincraftLauncherUI.window);
+        alert.showAndWait();
+        
+        try {
+            Desktop.getDesktop().browse(new URL(Link).toURI());
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(DesignHelpers.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | URISyntaxException ex) {
+            Logger.getLogger(DesignHelpers.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }  
     
 }

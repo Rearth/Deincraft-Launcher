@@ -5,9 +5,8 @@
  */
 package deincraftlauncher.start;
 
-import deincraftlauncher.IO.ZIPExtractor;
 import deincraftlauncher.IO.download.DownloadHandler;
-import deincraftlauncher.IO.download.Downloader;
+import deincraftlauncher.designElements.DesignHelpers;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.settings;
 import fr.theshark34.openauth.AuthPoints;
@@ -15,26 +14,29 @@ import fr.theshark34.openauth.AuthenticationException;
 import fr.theshark34.openauth.Authenticator;
 import fr.theshark34.openauth.model.AuthAgent;
 import fr.theshark34.openauth.model.response.AuthResponse;
+import fr.theshark34.openlauncherlib.JavaUtil;
 import fr.theshark34.openlauncherlib.LaunchException;
 import fr.theshark34.openlauncherlib.external.ExternalLaunchProfile;
 import fr.theshark34.openlauncherlib.external.ExternalLauncher;
 import fr.theshark34.openlauncherlib.minecraft.*;
+import fr.theshark34.openlauncherlib.util.LogUtil;
+import fr.theshark34.openlauncherlib.util.ProcessLogManager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import org.apache.commons.io.FileUtils;
-import uk.co.rx14.jmclaunchlib.LaunchSpec;
-import uk.co.rx14.jmclaunchlib.LaunchTask;
-import uk.co.rx14.jmclaunchlib.LaunchTaskBuilder;
 import uk.co.rx14.jmclaunchlib.auth.PasswordSupplier;
+import uk.co.rx14.jmclaunchlib.util.OS;
 
 /**
  *
@@ -179,16 +181,26 @@ public class StartMinecraft {
         }*/
 
         try {
+            
+            System.out.println("trying to start minecraft");
+            
             GameInfos infos = new GameInfos(pack.getName(), new File(pack.getPath()), new GameVersion("1.7.10", GameType.V1_7_10), new GameTweak[] {GameTweak.FORGE});
+            System.out.println("GameInfos done");
             
             Authenticator authenticator = new Authenticator(Authenticator.MOJANG_AUTH_URL, AuthPoints.NORMAL_AUTH_POINTS);
             AuthResponse rep = authenticator.authenticate(AuthAgent.MINECRAFT, settings.getUsername(), settings.getPassword(), "");
             AuthInfos authInfos = new AuthInfos(rep.getSelectedProfile().getName(), rep.getAccessToken(), rep.getSelectedProfile().getId());
+            System.out.println("authinfos done");
             
             //AuthInfos authInfos = new AuthInfos(settings.getUsername(), MCAuthentication.getToken(settings.getUsername(), settings.getPassword()), MCAuthentication.getUUID(settings.getUsername(), settings.getPassword()));
             
             ExternalLaunchProfile profile = MinecraftLauncher.createExternalProfile(infos, getFolder(pack), authInfos);
-            ExternalLauncher launcher = new ExternalLauncher(profile);
+            List<String> vmArgs = profile.getVmArgs();
+            vmArgs.add(String.valueOf("-Xms" + settings.getRAM() + "m"));
+            //System.out.println("vm args: " + vmArgs);
+            profile.setVmArgs(vmArgs);
+            ExternalLauncher launcher = new MCLauncher(profile);
+            System.out.println("profile and launcher done " + launcher.getProfile());
             
             Process launch = launcher.launch();
             
@@ -309,5 +321,89 @@ public class StartMinecraft {
         } catch (IOException ex) {
             Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    /**
+     *
+     */
+    public static class MCLauncher extends ExternalLauncher {
+    
+        ExternalLaunchProfile profile;
+        
+        public MCLauncher(ExternalLaunchProfile profile) {
+            super(profile, null);
+            this.profile = profile;
+            
+        }
+        
+        @Override
+        public Process launch() throws LaunchException {
+            
+            LogUtil.info("hi-ext");
+
+            ProcessBuilder builder = new ProcessBuilder();
+            ArrayList<String> commands = new ArrayList<>();
+            commands.add(getJavaCommand());
+            commands.addAll(Arrays.asList(JavaUtil.getSpecialArgs()));
+
+            if (profile.getMacDockName() != null && System.getProperty("os.name").toLowerCase().contains("mac"))
+                commands.add(JavaUtil.macDockName(profile.getMacDockName()));
+            if (profile.getVmArgs() != null)
+                commands.addAll(profile.getVmArgs());
+
+            commands.add("-cp");
+            commands.add(profile.getClassPath());
+
+            commands.add(profile.getMainClass());
+
+            if (profile.getArgs() != null)
+                commands.addAll(profile.getArgs());
+
+            if (profile.getDirectory() != null)
+                builder.directory(profile.getDirectory());
+
+            if (profile.isRedirectErrorStream())
+                builder.redirectErrorStream(true);
+
+            builder.command(commands);
+
+            String entireCommand = "";
+            for (String command : commands)
+                entireCommand += command + " ";
+
+            LogUtil.info("ent", ":", entireCommand);
+            LogUtil.info("start", profile.getMainClass());
+
+            try
+            {
+                Process p = builder.start();
+
+                return p;
+            }
+            catch (IOException e)
+            {
+                throw new LaunchException("Cannot launch !", e);
+            }
+        }
+    
+    }
+    
+    private static String getJavaCommand() {
+        
+        String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + (OS.getCURRENT() == OS.WINDOWS ? "java.exe" : "java");
+        
+        File x64Test = new File("C:\\Program Files\\Java");
+        
+        if (path.contains(" (x86)")) {
+            if (x64Test.exists()) {
+                return path.replace(" (x86)", "");
+            }
+            
+            Platform.runLater(() -> {
+                DesignHelpers.popupMessage("Du verwendest eine 32-Bit Java version. Dies kann evtl zu problemen führen. Bitte lade dir die aktuelle 64-bit version herunter", "http://www.chip.de/downloads/Java-Runtime-Environment-64-Bit_42224883.html");
+            });
+        }
+        
+        return path;
     }
 }
