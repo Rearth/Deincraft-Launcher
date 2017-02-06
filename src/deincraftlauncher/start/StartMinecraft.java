@@ -20,7 +20,6 @@ import fr.theshark34.openlauncherlib.external.ExternalLaunchProfile;
 import fr.theshark34.openlauncherlib.external.ExternalLauncher;
 import fr.theshark34.openlauncherlib.minecraft.*;
 import fr.theshark34.openlauncherlib.util.LogUtil;
-import fr.theshark34.openlauncherlib.util.ProcessLogManager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -391,6 +390,12 @@ public class StartMinecraft {
     private static String getJavaCommand() {
         
         String path = System.getProperty("java.home") + File.separator + "bin" + File.separator + (OS.getCURRENT() == OS.WINDOWS ? "java.exe" : "java");
+        
+        String minecraftRuntime = "C:\\Program Files (x86)\\Minecraft\\runtime\\jre-x64\\1.8.0_25\\bin\\java.exe";
+        if (new File(minecraftRuntime).exists()) {
+            System.out.println("using minecraft runtime!");
+            return minecraftRuntime;
+        }
         
         File x64Test = new File("C:\\Program Files\\Java");
         

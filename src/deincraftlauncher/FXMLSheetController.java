@@ -29,6 +29,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -56,11 +57,13 @@ public class FXMLSheetController implements Initializable {
     public AnchorPane mainPanel;
     @FXML
     public Rectangle backgroundColor;
+    @FXML
+    public ImageView backgroundImageView;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         instance = this;
-        //backgroundColor.setFill(DesignHelpers.colorGray);
+        backgroundColor.setFill(DesignHelpers.backGround);
         
         loadConfig();
         settings.loadFromFile();

@@ -77,11 +77,11 @@ public class DesignHelpers {
     }
     
     public static Font getTitleFont() {
-        return Font.font("Verdana", FontWeight.BOLD, 48);
+        return Font.loadFont(DesignHelpers.class.getResource("/deincraftlauncher/Images/Elemental_End.ttf").toString(), 48);
     }
     
     public static Font getLabelFont() {
-        return Font.font("Roboto", FontWeight.BOLD,  14);
+        return Font.loadFont(DesignHelpers.class.getResource("/deincraftlauncher/Images/Elemental_End.ttf").toString(), 12);
     }
     
     public static  Font getFocusFont() {
@@ -116,7 +116,7 @@ public class DesignHelpers {
     }
     
     public static Font getNotesFont() {
-        return Font.font("Roboto", FontWeight.SEMI_BOLD,  16);
+        return Font.loadFont(DesignHelpers.class.getResource("/deincraftlauncher/Images/Elemental_End.ttf").toString(), 15);
     }   
 
     public static void popupMessage(String text) {
