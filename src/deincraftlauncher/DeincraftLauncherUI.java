@@ -36,6 +36,9 @@ public class DeincraftLauncherUI extends Application {
         
         Scene scene = new Scene(root);
         
+        
+        scene.getStylesheets().add(getClass().getResource("Main_Design.css").toExternalForm());
+        
         window = stage;
         stage.initStyle(StageStyle.UNDECORATED);
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/deincraftlauncher/Images/IconA.png")));
@@ -59,8 +62,8 @@ public class DeincraftLauncherUI extends Application {
         String UserDir = System.getProperty("user.home");
         System.out.println("Userdirectory = " + UserDir);
         
-        File file = new File(UserDir + File.separator + "Deincraft" + File.separator + "config.txt");
-        System.out.println("config path: " + UserDir + File.separator + "Deincraft");
+        File file = new File(UserDir + File.separator + "Minefactory" + File.separator + "config.txt");
+        System.out.println("config path: " + UserDir + File.separator + "Minefactory");
         System.out.println("first time: " + !file.exists());
         return !file.exists();
     }

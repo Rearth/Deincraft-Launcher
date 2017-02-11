@@ -6,13 +6,13 @@
 package deincraftlauncher;
 
 import deincraftlauncher.IO.FileUtils;
-import deincraftlauncher.IO.ZIPExtractor;
-import deincraftlauncher.IO.download.DownloadHandler;
 import deincraftlauncher.IO.download.Downloader;
 import deincraftlauncher.designElements.DesignHelpers;
+import deincraftlauncher.designElements.PackViewHandler;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.ModpackSelector;
 import deincraftlauncher.modPacks.settings;
+import deincraftlauncher.news.NewsHandler;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,18 +21,25 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
+import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  *
@@ -44,7 +51,7 @@ public class FXMLSheetController implements Initializable {
     
     private static FXMLSheetController instance = null;
     private static final ModpackSelector PackSelecter = ModpackSelector.getInstance();
-    private static final String imgURL = "https://onedrive.live.com/download?cid=829AE01C48100392&resid=829AE01C48100392%21112&authkey=AHzDcPh-tYrec5g";
+    private static boolean newsSelected = false;
     
     
     public static FXMLSheetController getInstance() {
@@ -56,17 +63,53 @@ public class FXMLSheetController implements Initializable {
     @FXML
     public AnchorPane mainPanel;
     @FXML
-    public Rectangle backgroundColor;
+    public Label labelModpacks;
     @FXML
-    public ImageView backgroundImageView;
+    public Label labelNews;
+    @FXML
+    public Rectangle packSelectorPane;
+    @FXML
+    public Label PatchNotesTitle;
+    @FXML
+    public Label PatchNotesContent;
+    @FXML
+    public ImageView packImage;
+    @FXML
+    public Label StatusTitle;
+    @FXML
+    public Label StatusServer;
+    @FXML
+    public Label StatusPlayers;
+    @FXML
+    public Label closeLabel;
+    @FXML
+    public Label minimizeLabel;
+    @FXML
+    public Label playerLabel;
+    @FXML
+    public Label playerWelcome;
+    @FXML
+    public Rectangle startRect;
+    @FXML
+    public Label startButton;
+    @FXML
+    public Label progressTextRight;
+    @FXML
+    public Label progressTextLeft;
+    @FXML
+    public ProgressBar downloadProgress;
+    @FXML
+    public Pane ModpackPane;
+    @FXML
+    public ScrollPane NewsPane;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         instance = this;
-        backgroundColor.setFill(DesignHelpers.backGround);
         
         loadConfig();
         settings.loadFromFile();
+        
         
         PackSelecter.init();
         Image infinityImage = new Image(getClass().getResource("/deincraftlauncher/Images/logo_FTBInfinity.jpg").toString());
@@ -89,46 +132,31 @@ public class FXMLSheetController implements Initializable {
         Deincraft.setInfoFileLink("https://onedrive.live.com/download?cid=829AE01C48100392&resid=829AE01C48100392%21115&authkey=AO1QdK9f_lrHj5c");
         Deincraft.setForgeVersion("1.7.10-10.13.4.1614-1.7.10");
         Deincraft.setServer("46.4.75.39", 25565);
+        Deincraft.setMCVersion("1.7.10");
         PackSelecter.registerModpack(Deincraft);
         PackSelecter.registerModpack(Skyfactory);
         PackSelecter.registerModpack(Vanilla);
         PackSelecter.registerModpack(FTBInfinity);
-        System.out.println("selector bottom end: " + PackSelecter.getBottomEnd());
         
-        PackSelecter.addEnds();
+        //PackSelecter.addEnds();
         
         Deincraft.select();
         
-        downloadScreens();
+        initFonts();
+        initStartButton();
+        playerLabel.setText(settings.getInstance().NickName);
+        PackViewHandler.initialSelect();
         
         checkForUpdates();
-        Config.config().updateLib();
-        
-        //reselect();
+        NewsHandler.init();
         
         System.out.println("starting done");
         
-    }   
-    
-    private void reselect() {
-        
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                System.out.println("reselecting pack");
-                PackSelecter.selectedPack.select();
-            }
-        }, 300);
-    }
-    
-    public void onTestClick() {
-        System.out.println("klicked testTile!");
     }
 
     private void loadConfig() {
         
-        File config = new File(System.getProperty("user.home") + File.separator + "Deincraft" + File.separator + "config.txt");
+        File config = new File(System.getProperty("user.home") + File.separator + "Minefactory" + File.separator + "config.txt");
         System.out.println("loading config...");
         
         ArrayList<String> configText = readFile(config);
@@ -162,66 +190,28 @@ public class FXMLSheetController implements Initializable {
         return Text;
     }
     
+    @FXML
     public void exit() {
         System.exit(0);
     }
     
-    private void downloadScreens() {
-        
-        if (ModpackSelector.getInstance().selectedPack.getScreenshots().size() >= 2) {
-            return;
-        }
-        
-        System.out.println("downloading Screenshots");
-        
-        String URL = imgURL;
-        String targetPath = Config.getLauncherFolder();
-        DownloadHandler.addItem(targetPath, URL, this::onImgDone);
-        DownloadHandler.setTitle("Downloade Screenshots");
-        DownloadHandler.start();
-        ModpackSelector.getInstance().selectedPack.getView().enableLoading();
-    }
-    
-    
-    private void onImgDone(Downloader loader) {
-        System.out.println("Screenshots downloaded");
-        
-        try {
-            ZIPExtractor.extractArchive(loader.getTargetFile(), Config.getLauncherFolder());
-        } catch (Exception ex) {
-            System.out.println("cant extract Images");
-        }
-        Platform.runLater(() -> {
-            
-            ModpackSelector.getInstance().reloadScreenshots();
-            ModpackSelector.getInstance().selectedPack.getView().disableLoading();
-            reselect();
-        });
-    }
-    
     private void checkForUpdates() {
-        
-        ModpackSelector.getInstance().setStartLoading(true);
         
         for (Modpack pack : ModpackSelector.getInstance().getPacks()) {
             if (!pack.isWIP()) {
                 System.out.println("Downloading info file for " + pack.getName());
-                Downloader infoFile = new Downloader(pack.getInfoFileLink(), Config.getLauncherFolder());
-                infoFile.start();
-                infoFile.setOnFinished((Downloader loader) -> {
-                    infoDownloaded(loader, pack);
-                });
+                String saveTo = Config.getLauncherFolder() + pack.getName() + ".txt";
+                Downloader.direectDownload(pack.getInfoFileLink(), saveTo);
+                infoDownloaded(new File(saveTo), pack);
             }
             
         }
         
     }
     
-    private void infoDownloaded(Downloader loader, final Modpack pack) {
+    private void infoDownloaded(File info, final Modpack pack) {
         
         System.out.println("Downloaded info for pack " + pack.getName());
-        
-        File info = new File(loader.getTargetFile());
         
         ArrayList<String> total = FileUtils.readFile(info);
         String text = total.get(0);
@@ -240,7 +230,7 @@ public class FXMLSheetController implements Initializable {
         pack.setConfigVersion(texts[4]);
         pack.setConfigLink(texts[5]);
         
-        String News = new String();
+        /*String News = new String();
         for (int i = 1; i < total.size(); i++) {
             News += total.get(i) + System.getProperty("line.separator");
         }
@@ -248,9 +238,115 @@ public class FXMLSheetController implements Initializable {
         final String NewsB = News;
         Platform.runLater(() -> {
             pack.setNews(NewsB);
-            pack.getView().updateInfo();
-            ModpackSelector.getInstance().setStartLoading(false);
+            pack.updateInfo();
+        });*/
+        
+    }
+
+    private void initFonts() {
+        setFont(labelModpacks);
+        setFont(labelNews);
+        setFont(PatchNotesTitle);
+        setFont(PatchNotesContent);
+        setFont(StatusTitle);
+        setFont(StatusServer);
+        setFont(StatusPlayers);
+        setFont(closeLabel);
+        setFont(minimizeLabel);
+        setFont(playerLabel);
+        setFont(playerWelcome);
+        setFont(startButton);
+        setFont(progressTextRight);
+        setFont(progressTextLeft);
+        packImage.setEffect(DesignHelpers.getShadowEffect());  
+        startRect.setEffect(DesignHelpers.getShadowEffect());  
+        
+    }
+    
+    private void setFont(Labeled node) {
+        node.setFont(DesignHelpers.getTextFont((int) node.getFont().getSize()));
+    }
+    
+    @FXML
+    public void minimize() {
+        ((Stage) mainPanel.getScene().getWindow()).setIconified(true);
+    }
+
+    private void initStartButton() {
+        
+        startButton.setOnMouseEntered((MouseEvent e) -> {
+            handleHover(true, e);
         });
+        
+        startButton.setOnMouseExited((MouseEvent e) -> {
+            handleHover(false, e);
+        });
+        
+        startButton.setOnMouseClicked((MouseEvent e) -> {
+            ModpackSelector.getInstance().selectedPack.handleStart();
+        });
+        
+    }
+    
+    public void handleHover(boolean entered, MouseEvent e) {
+        
+        double scaleTo = 1.1;
+        
+        if (entered) {
+            focusAnim(1.0, scaleTo, 120);
+        } else {
+            focusAnim(scaleTo, 1.0, 120);
+            
+        }
+        
+    }
+    
+    private void focusAnim(double from, double to, int time) {
+        
+        
+        ArrayList<Node> node = new ArrayList<>();
+        node.add(startButton);
+        node.add(startRect);
+        
+        for (Node Elem : node) {
+            ScaleTransition scaleanim = new ScaleTransition(Duration.millis(time), Elem);
+            scaleanim.setFromX(from);
+            scaleanim.setToX(to);
+            scaleanim.setFromY(from);
+            scaleanim.setToY(to);
+            scaleanim.setCycleCount(1);
+            scaleanim.setAutoReverse(true);
+            scaleanim.play();
+        }
+        
+    }
+    
+    @FXML
+    private void clickModpacks() {
+        System.out.println("clicked on modpacks");
+        if (!newsSelected) {
+            return;
+        }
+        
+        PackViewHandler.show();
+        NewsHandler.hide();
+        newsSelected = false;
+        System.out.println("hiding modpack views");
+        
+        //doStuff
+    }
+    
+    @FXML
+    private void clickNews() {
+        System.out.println("clicked on News");
+        if (newsSelected) {
+            return;
+        }
+        
+        PackViewHandler.hide();
+        NewsHandler.show();
+        newsSelected = true;
+        System.out.println("showing modpack views");
         
     }
     

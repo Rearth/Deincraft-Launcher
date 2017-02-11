@@ -7,6 +7,7 @@ package deincraftlauncher.start;
 
 import deincraftlauncher.IO.download.DownloadHandler;
 import deincraftlauncher.designElements.DesignHelpers;
+import deincraftlauncher.designElements.PackViewHandler;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.settings;
 import fr.theshark34.openauth.AuthPoints;
@@ -183,7 +184,7 @@ public class StartMinecraft {
             
             System.out.println("trying to start minecraft");
             
-            GameInfos infos = new GameInfos(pack.getName(), new File(pack.getPath()), new GameVersion("1.7.10", GameType.V1_7_10), new GameTweak[] {GameTweak.FORGE});
+            GameInfos infos = new GameInfos(pack.getName(), new File(pack.getPath()), new GameVersion(pack.getMCVersion(), pack.getGameType()), new GameTweak[] {GameTweak.FORGE});
             System.out.println("GameInfos done");
             
             Authenticator authenticator = new Authenticator(Authenticator.MOJANG_AUTH_URL, AuthPoints.NORMAL_AUTH_POINTS);
@@ -211,14 +212,14 @@ public class StartMinecraft {
                 if (line.contains("Completed early MinecraftForge initialization")) {
                     Platform.runLater(() -> {
                         System.out.println("minecraft starting, enabling start button");
-                        pack.getView().setStartLoading(false);
-                        pack.getView().setStartLocked("started");
+                        PackViewHandler.setStartLoading(false);
+                        PackViewHandler.setStartLocked("started");
                     });
                 } else if (isErrorCode(line)) {
                     Platform.runLater(() -> {
                         System.out.println("minecraft stopped");
-                        pack.getView().setStartLoading(false);
-                        pack.getView().setStartUnLocked("Start");
+                        PackViewHandler.setStartLoading(false);
+                        PackViewHandler.setStartUnLocked("Start");
                     });
                 }
                 
@@ -241,8 +242,8 @@ public class StartMinecraft {
                 if (!launch.isAlive()) {
                     Platform.runLater(() -> {
                         System.out.println("minecraft stopped, process is dead!");
-                        pack.getView().setStartLoading(false);
-                        pack.getView().setStartUnLocked("Start");
+                        PackViewHandler.setStartLoading(false);
+                        PackViewHandler.setStartUnLocked("Start");
                     });
                 } else {
                     checkAlive(launch, pack);

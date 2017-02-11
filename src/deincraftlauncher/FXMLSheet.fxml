@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.shape.*?>
 <?import java.lang.*?>
@@ -8,8 +10,134 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" fx:id="mainPanel" prefHeight="454.0" prefWidth="644.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="deincraftlauncher.FXMLSheetController">
+<AnchorPane id="AnchorPane" fx:id="mainPanel" prefHeight="690.0" prefWidth="1300.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="deincraftlauncher.FXMLSheetController">
    <children>
-      <Rectangle fx:id="backgroundColor" fill="#252a33" height="454.0" stroke="BLACK" strokeType="INSIDE" width="644.0" />
+      <ImageView fitHeight="690.0" fitWidth="1300.0" pickOnBounds="true">
+         <image>
+            <Image url="@Images/wallpaper_grass.jpg" />
+         </image>
+      </ImageView>
+      <Rectangle height="85.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" styleClass="borderMenuBackground" width="1300.0" />
+      <Pane fx:id="ModpackPane" layoutY="85.0">
+         <children>
+            <Rectangle fx:id="startRect" fill="#3866b9" height="67.0" layoutX="192.0" layoutY="505.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="195.0" />
+            <Rectangle fx:id="packSelectorPane" height="605.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" styleClass="borderMenuBackground" width="110.0" />
+            <Pane layoutX="183.0" layoutY="144.0">
+               <children>
+                  <ImageView fitHeight="342.0" fitWidth="623.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@Images/Tile_Background.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="PatchNotesTitle" alignment="CENTER" contentDisplay="CENTER" layoutX="8.0" layoutY="14.0" prefHeight="73.0" prefWidth="616.0" styleClass="CardTitle" text="Minefactory Patchnotes" textAlignment="CENTER">
+                     <font>
+                        <Font name="Arial Black" size="26.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="PatchNotesContent" alignment="TOP_LEFT" contentDisplay="CENTER" layoutX="25.0" layoutY="87.0" prefHeight="209.0" prefWidth="577.0" styleClass="CardContent" text="- Patchnote" wrapText="true">
+                     <font>
+                        <Font name="Arial Black" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Label fx:id="startButton" alignment="CENTER" contentDisplay="CENTER" layoutX="192.0" layoutY="505.0" prefHeight="67.0" prefWidth="195.0" text="Spielen" textAlignment="CENTER" textFill="#f2f2f2">
+               <font>
+                  <Font name="Arial Black" size="28.0" />
+               </font>
+            </Label>
+            <Label fx:id="progressTextRight" alignment="BOTTOM_RIGHT" contentDisplay="RIGHT" layoutX="806.0" layoutY="505.0" prefHeight="36.0" prefWidth="319.0" text="0/0 MB" textAlignment="RIGHT" textFill="#f2f2f2" visible="false">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <ImageView fx:id="packImage" fitHeight="141.0" fitWidth="402.0" layoutX="132.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@Images/MineFactory_Logo_Large.png" />
+               </image>
+            </ImageView>
+            <ProgressBar fx:id="downloadProgress" layoutX="417.0" layoutY="544.0" prefHeight="28.0" prefWidth="708.0" progress="0.0" styleClass="progressBar" visible="false" />
+            <Label fx:id="progressTextLeft" alignment="BOTTOM_LEFT" layoutX="417.0" layoutY="505.0" prefHeight="36.0" prefWidth="292.0" text="downloade ..." textFill="#f2f2f2" visible="false">
+               <font>
+                  <Font name="MS Outlook" size="13.0" />
+               </font>
+            </Label>
+            <Pane fx:id="StatusPane" layoutX="837.0" layoutY="144.0">
+               <children>
+                  <ImageView fitHeight="331.0" fitWidth="292.0" pickOnBounds="true">
+                     <image>
+                        <Image url="@Images/Tile_Background.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="StatusTitle" alignment="CENTER" contentDisplay="CENTER" layoutY="14.0" prefHeight="73.0" prefWidth="292.0" styleClass="CardTitle" text="Status" textAlignment="CENTER">
+                     <font>
+                        <Font name="Arial Black" size="26.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="StatusPlayers" contentDisplay="CENTER" layoutX="63.0" layoutY="157.0" prefHeight="45.0" prefWidth="211.0" styleClass="CardContent" text="5/60" wrapText="true">
+                     <font>
+                        <Font name="Arial Black" size="20.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="StatusServer" contentDisplay="CENTER" layoutX="63.0" layoutY="97.0" prefHeight="45.0" prefWidth="211.0" styleClass="ServerStateOff" text="Offline" wrapText="true">
+                     <font>
+                        <Font name="Arial Black" size="20.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="18.0" layoutY="160.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@Images/imagePlayers.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" layoutX="18.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@Images/imageServer.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+      <Rectangle fill="#c9c9c9" height="4.0" layoutY="85.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="1300.0" />
+      <Label fx:id="labelModpacks" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="148.0" layoutY="24.0" onMouseClicked="#clickModpacks" prefHeight="45.0" styleClass="MenuLabel" text="Modpacks" textAlignment="CENTER">
+         <font>
+            <Font name="Arial Black" size="30.0" />
+         </font>
+      </Label>
+      <Label fx:id="labelNews" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="395.0" layoutY="24.0" onMouseClicked="#clickNews" prefHeight="45.0" styleClass="MenuLabel" text="News" textAlignment="CENTER">
+         <font>
+            <Font name="Eras Bold ITC" size="30.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="122.0" fitWidth="124.0" layoutX="-4.0" layoutY="-18.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@Images/IconA.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="closeLabel" layoutX="1274.0" layoutY="10.0" onMouseClicked="#exit" styleClass="exitItem" text="X" textFill="#bc0b0b">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+      <Label fx:id="minimizeLabel" layoutX="1245.0" layoutY="8.0" onMouseClicked="#minimize" styleClass="exitItem" text="-" textFill="#2f0404">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Label>
+      <Label fx:id="playerWelcome" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="905.0" layoutY="24.0" prefHeight="45.0" styleClass="WelcomeLabel" text="Willkommen, " textAlignment="CENTER" textFill="#4d4d4d">
+         <font>
+            <Font name="Eras Bold ITC" size="20.0" />
+         </font>
+      </Label>
+      <Label fx:id="playerLabel" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" layoutX="1095.0" layoutY="24.0" prefHeight="45.0" styleClass="PlayerLabel" text="Spieler" textAlignment="CENTER" textFill="#fafafa">
+         <font>
+            <Font name="Eras Bold ITC" size="20.0" />
+         </font>
+      </Label>
+      <ScrollPane fx:id="NewsPane" layoutY="89.0" prefHeight="601.0" prefWidth="236.0" visible="false">
+         <content>
+            <VBox prefHeight="600.0" prefWidth="235.0" />
+         </content>
+      </ScrollPane>
    </children>
 </AnchorPane>

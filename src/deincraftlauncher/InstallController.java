@@ -6,6 +6,7 @@
 package deincraftlauncher;
 
 import deincraftlauncher.IO.MCAuthentication;
+import static deincraftlauncher.IO.MCAuthentication.setLegacyName;
 import static deincraftlauncher.IO.ZIPExtractor.extractArchive;
 import deincraftlauncher.designElements.DesignHelpers;
 import deincraftlauncher.designElements.TextButton;
@@ -30,7 +31,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -42,14 +42,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.commons.io.FileUtils;
 
@@ -82,10 +79,10 @@ public class InstallController implements Initializable {
     private TextButton save;
     private TextButton login;
     String targetPath = "";
-    final File folder = new File(System.getProperty("user.home") + File.separator + "Deincraft");
+    final File folder = new File(System.getProperty("user.home") + File.separator + "Minefactory");
     File folderLauncher = null;
     File folderGame = null;
-    final File config = new File(System.getProperty("user.home") + File.separator + "Deincraft" + File.separator + "config.txt");
+    final File config = new File(System.getProperty("user.home") + File.separator + "Minefactory" + File.separator + "config.txt");
     File defaultInstall = new File("C:\\Users\\" + System.getProperty("user.name") + "\\AppData\\Roaming\\");
     String Username;
     String Password;
@@ -166,7 +163,7 @@ public class InstallController implements Initializable {
             String choosed = chosen.toString();
             System.out.println("Chosen Path: " + choosed);
 
-            targetPath = choosed + File.separator + "Deincraft" + File.separator;
+            targetPath = choosed + File.separator + "Minefactory" + File.separator;
             pathLabel.setText(targetPath);
         } else {
             System.out.println("pathchange cancelled");
@@ -205,7 +202,7 @@ public class InstallController implements Initializable {
                 createDesktopShortcut();
             }
             
-            popupMessage("Installation abgeschlossen. Starte Deincraft Launcher...");
+            popupMessage("Installation abgeschlossen. Starte Minefactory Launcher...");
             mainPanel.setVisible(false);
             try {
                 Thread.sleep(500);
@@ -253,13 +250,13 @@ public class InstallController implements Initializable {
     
     void setDefaultPath() {
         if (defaultInstall.exists()) {
-            pathLabel.setText(defaultInstall.toString() + File.separator + "Deincraft" + File.separator);
+            pathLabel.setText(defaultInstall.toString() + File.separator + "Minefactory" + File.separator);
         } else {
             pathLabel.setText(folder.toString());
             defaultInstall = folder;
         }
         
-        targetPath = defaultInstall.toString() + File.separator + "Deincraft" + File.separator;
+        targetPath = defaultInstall.toString() + File.separator + "Minefactory" + File.separator;
         System.out.println("targetpath=" + targetPath);
     }
     
@@ -297,10 +294,14 @@ public class InstallController implements Initializable {
             return;
         }
         
+        
+        
         System.out.println("Password selected: " + Passwordfield.getText());
         Username = Usernamefield.getText();
         Password = Passwordfield.getText();
         
+        setLegacyName(Username, Password);
+        System.out.println("legacyName=" + settings.getInstance().NickName);
         login.setVisible(false);
         
         loginLabel.setText("Eingeloggt als " + Username);

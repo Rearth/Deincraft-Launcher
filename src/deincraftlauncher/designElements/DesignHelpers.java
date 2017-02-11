@@ -5,7 +5,6 @@
  */
 package deincraftlauncher.designElements;
 
-import deincraftlauncher.IO.download.DownloadHandler;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -14,19 +13,13 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
-import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
@@ -37,11 +30,10 @@ import javafx.util.Duration;
 public class DesignHelpers {  
     
     public static final int defaultgap = 13;
-    public static final Color colorGray = Color.rgb(30, 30, 30, 0.4);
     public static final Color foreGround = Color.rgb(40, 80, 140);
     public static final Color backGround = Color.rgb(37, 42, 51);
     
-    private static final int shadowsize = 0;
+    private static final int shadowsize = 4;
     private static final double darkencolor = 0.5;
     
     public static Effect getShadowEffect() {
@@ -58,7 +50,9 @@ public class DesignHelpers {
     public static Effect getShadowEffect(int size) {
         
         DropShadow totalShadow = new DropShadow();
-        totalShadow.setRadius(size);
+        totalShadow.setOffsetY(shadowsize);
+        totalShadow.setOffsetX(shadowsize);
+        //totalShadow.setRadius(size);
         totalShadow.setColor(Color.web("0x243642"));
         
         return totalShadow;
@@ -81,7 +75,11 @@ public class DesignHelpers {
     }
     
     public static Font getLabelFont() {
-        return Font.loadFont(DesignHelpers.class.getResource("/deincraftlauncher/Images/Elemental_End.ttf").toString(), 12);
+        return Font.loadFont(DesignHelpers.class.getResource("/deincraftlauncher/Images/Elemental_End.ttf").toString(), 11);
+    }
+    
+    public static Font getTextFont(int size) {
+        return Font.loadFont(DesignHelpers.class.getResource("/deincraftlauncher/Images/Elemental_End.ttf").toString(), size);
     }
     
     public static  Font getFocusFont() {
@@ -93,11 +91,11 @@ public class DesignHelpers {
     }
     
     private Font getFocusFontHere() {
-        return Font.loadFont(getClass().getResource("/deincraftlauncher/Images/Minecrafter.ttf").toString(), 24);
+        return Font.loadFont(getClass().getResource("/deincraftlauncher/Images/Elemental_End.ttf").toString(), 24);
     }
     
     private Font getFocusFontHere(int size) {
-        return Font.loadFont(getClass().getResource("/deincraftlauncher/Images/Minecrafter.ttf").toString(), size);
+        return Font.loadFont(getClass().getResource("/deincraftlauncher/Images/Elemental_End.ttf").toString(), size);
     }
     
     public static void playFadeAnim(Node node, boolean hide) {

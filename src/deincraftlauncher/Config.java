@@ -6,7 +6,6 @@
 package deincraftlauncher;
 
 import deincraftlauncher.IO.ZIPExtractor;
-import deincraftlauncher.IO.download.DownloadHandler;
 import deincraftlauncher.IO.download.Downloader;
 import java.io.File;
 import java.util.logging.Level;
@@ -39,7 +38,11 @@ public class Config {
     }
     
     public static String getSettingFile() {
-        return System.getProperty("user.home") + File.separator + "Deincraft" + File.separator + "settings";
+        return System.getProperty("user.home") + File.separator + "Minefactory" + File.separator + "settings";
+    }
+    
+    public static String getNewsFile() {
+        return getLauncherFolder() + "news";
     }
     
     public static String getLauncherFolder() {
@@ -57,23 +60,6 @@ public class Config {
     public static String getCacheFolder() {
         
         return getGameFolder() + "Cache" + File.separator;
-    }
-    
-    public void updateLib() {
-        
-        System.out.println("checking lib update!");
-        return;
-        /*File test = new File(getCacheFolder());
-        if (!test.exists()) {
-        System.out.println("Libs not downloaded!");
-        test.mkdirs();
-        DownloadHandler.addItem(getCacheFolder(), libLink, this::onFinished);
-        DownloadHandler.start();
-        DownloadHandler.setTitle("Downloading Assets");
-        } else {
-        System.out.print("cache folder already existing");
-        }*/
-        
     }
     
     private void onFinished(Downloader loader) {

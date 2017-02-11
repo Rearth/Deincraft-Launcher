@@ -12,8 +12,10 @@ import deincraftlauncher.IO.download.DownloadHandler;
 import deincraftlauncher.IO.download.Downloader;
 import deincraftlauncher.IO.download.FTPSync;
 import deincraftlauncher.designElements.ModpackView;
+import deincraftlauncher.designElements.PackViewHandler;
 import deincraftlauncher.start.StartMinecraft;
 import static deincraftlauncher.start.StartMinecraft.hasCaches;
+import fr.theshark34.openlauncherlib.minecraft.GameType;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,16 +41,13 @@ public class Modpack {
 
     private final String Name;
     private final Image image;
-    private final ArrayList<Image> Screenshots = new ArrayList<>();
-    private final ModpackView view;
-    private final Color titleColor;
     private final String path;
     
     private int playersOnline = 0;
-    private int maxPlayers = 20;
+    private int maxPlayers = 0;
     private boolean installed = false;
     private boolean updated = false;
-    private boolean serverOnline = true;
+    private boolean serverOnline = false;
     private boolean WIP = false;
     private String forgeVersion;
     private MCQuery mcQuery;
@@ -66,36 +65,18 @@ public class Modpack {
     private String MainVersion = "0.0.0";
     private String MainVersionInstalled = "0.0.0";
     private String MainLink;
-    private String News = "Downloade Patchnotes...";
+    private String News = "Nicht verfügbar";
+    private String MCVersion = "";
     
     public Modpack(String Name, Image image, Color color) {
         this.Name = Name;
         this.image = image;
-        this.titleColor = color;
         path = Config.getGameFolder() + this.Name + File.separator;
         
-        try {
-            File Images = new File(Config.getImagesFolder() + Name + File.separator);
-            ArrayList<File> screenSFiles = new ArrayList<>();
-            screenSFiles.addAll(Arrays.asList(Images.listFiles()));
-
-            for (File file : screenSFiles) {
-                Image img = new Image(file.toURI().toString());
-                Screenshots.add(img);
-                System.out.println("found Screenshot: " + file.toString());
-            }
-
-            if (Screenshots.isEmpty()) {
-                Screenshots.add(new Image(getClass().getResource("/deincraftlauncher/Images/PlaceHolder_Image.jpg").toString()));
-            }
-        } catch(java.lang.NullPointerException ex) {
-            System.out.println("cant load screenshots");
-            Screenshots.add(new Image(getClass().getResource("/deincraftlauncher/Images/PlaceHolder_Image.jpg").toString()));
-        }
         
         loadFromConfig();
         
-        view = new ModpackView(this);
+        //view = new ModpackView(this);
         
         
     }
@@ -103,47 +84,26 @@ public class Modpack {
     public void select() {
         ModpackSelector.getInstance().selectedPack = this;
         System.out.println("Selected Modpack: " + this.Name);
-        updateServerChecker();
         showUp();
     }
     
     private void showUp() {
-        view.setVisible(true);
-    }
-    
-    public void hide() {
-        view.setVisible(false);
-    }
-
-    public ArrayList<Image> getScreenshots() {
-        return Screenshots;
-    }
-    
-    public void reloadScreenshots() {
+        PackViewHandler.showPack(this);
         
-        System.out.println("reloading screenshots");
-        
-        File Images = new File(Config.getImagesFolder() + Name + File.separator);
-        if (!Images.exists()) {
-            Images.mkdirs();
-        }
-        ArrayList<File> screenSFiles = new ArrayList<>();
-        screenSFiles.addAll(Arrays.asList(Images.listFiles()));
-        
-        Screenshots.clear();
-        
-        for (File file : screenSFiles) {
-            Image img = new Image(file.toURI().toString());
-            Screenshots.add(img);
-            System.out.println("found Screenshot: " + file.toString());
+        if (WIP) {
+            PackViewHandler.setStartLocked("Coming Soon");
+        } else {
+            PackViewHandler.setStartUnLocked("Spielen");
         }
         
-        if (Screenshots.isEmpty()) {
-            System.out.println("couldnt find images");
-            Screenshots.add(new Image(getClass().getResource("/deincraftlauncher/Images/PlaceHolder_Image.jpg").toString()));
-        }
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                updateServerChecker();
+            }
+        }, 100);
         
-        getView().disableLoading();
     }
     
     public String getState() {
@@ -219,7 +179,7 @@ public class Modpack {
         System.out.println("Handling Start action for pack " + Name + " Update: " + updateAvaible());
         
         if (updateAvaible()) {
-            view.setStartLocked("Downloade...");
+            PackViewHandler.setStartLocked("Downloade");
             System.out.println("Downloading update");
             if (!ModsVersion.equals(ModsVersionInstalled)) {
                 updateMods();
@@ -252,15 +212,14 @@ public class Modpack {
         saveConfig();
         
         Platform.runLater(() -> {
-            this.getView().setStartLoading(true);
+            PackViewHandler.setStartLoading(true);
         });
                 
         if (!updateAvaible()) {
             System.out.println("Finished all files for this pack, enabling start button");
             Platform.runLater(() -> {
-                this.getView().setStartLoading(false);
-                view.updateInfo();
-                view.setStartUnLocked("Start");      
+                PackViewHandler.setStartLoading(false);
+                PackViewHandler.setStartUnLocked("Start");      
             });
         }
     }
@@ -277,8 +236,7 @@ public class Modpack {
         if (!updateAvaible()) {
             System.out.println("Finished all files for this pack, enabling start button");
             Platform.runLater(() -> {
-                view.updateInfo();
-                view.setStartUnLocked("Start");      
+                PackViewHandler.setStartUnLocked("Start");      
             });
         }
     }
@@ -308,8 +266,7 @@ public class Modpack {
         if (!updateAvaible()) {
             System.out.println("Finished all files for this pack, enabling start button");
             Platform.runLater(() -> {
-                view.updateInfo();
-                view.setStartUnLocked("Start");      
+                PackViewHandler.setStartUnLocked("Start");      
             });
         }
         
@@ -319,7 +276,7 @@ public class Modpack {
         
         final Modpack thispack = this;
         
-        view.setStartLoading(true);
+        PackViewHandler.setStartLoading(true);
         
         Thread thread = new Thread(){
             @Override
@@ -341,11 +298,6 @@ public class Modpack {
         FTPSync synctask = new FTPSync(this.getPath() + "mods" + File.separator, FTPDir, this);
         
     }
-
-    //<editor-fold defaultstate="collapsed" desc="getter/setter">
-    public ModpackView getView() {
-        return view;
-    }
     
     public boolean isWIP() {
         System.out.println("WIP state for " + Name + "=" + WIP);
@@ -354,9 +306,6 @@ public class Modpack {
     
     public void setWIP(boolean WIP) {
         this.WIP = WIP;
-        if (WIP) {
-            view.setWIP();
-        }
     }
     
     public String getInfoFileLink() {
@@ -432,10 +381,6 @@ public class Modpack {
         this.MainLink = MainLink;
     }
     
-    public Color getTitleColor() {
-        return titleColor;
-    }
-    
     public int getPlayersOnline() {
         return playersOnline;
     }
@@ -509,6 +454,7 @@ public class Modpack {
     private void updateServerChecker() {
         
         if (serverIP == null || serverPort == 0) {
+            PackViewHandler.updateStats(this);
             return;
         }
         
@@ -526,8 +472,9 @@ public class Modpack {
             maxPlayers = 0;
             serverOnline = false;
         }
+        
         Platform.runLater(() -> {
-                this.getView().updateStats();
+                PackViewHandler.updateStats(this);
         });
         
         Timer timer = new Timer();
@@ -543,5 +490,30 @@ public class Modpack {
     public String getCaches() {
         return this.getPath() + "Cache" + File.separator;
     }
+
+    public String getMCVersion() {
+        return MCVersion;
+    }
+
+    public void setMCVersion(String MCVersion) {
+        this.MCVersion = MCVersion;
+    }
     
+    public GameType getGameType() {
+        
+        if (MCVersion.contains("1.7.10")) {
+            return GameType.V1_7_10;
+        }
+        
+        return GameType.V1_8_HIGHER;
+    }
+
+    public void updateInfo() {
+        if (ModpackSelector.getInstance().selectedPack.equals(this)) {
+            PackViewHandler.setPatchNotes(News);
+            if (updateAvaible()) {
+                PackViewHandler.setStartText("Aktualisieren");
+            }
+        }
+    }
 }

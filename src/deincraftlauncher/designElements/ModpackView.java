@@ -102,7 +102,7 @@ public final class ModpackView {
         System.out.println("creating view for: " + pack.getName());
         this.pack = pack;
         gallery = new Gallery(galleryX, galleryY, gallerySizeX, gallerySizeY);
-        gallery.addImage(pack.getScreenshots());
+        //gallery.addImage(pack.getScreenshots());
         gallery.show();
         Nodes.addAll(gallery.getNodes());
         
@@ -115,7 +115,7 @@ public final class ModpackView {
         title.setAlignment(Pos.CENTER);
         title.setFont(getTitleFont());
         title.setEffect(DesignHelpers.getShadowEffect(50));
-        title.setBackground(new Background(new BackgroundFill(pack.getTitleColor(), radii, insets)));
+        //title.setBackground(new Background(new BackgroundFill(pack.getTitleColor(), radii, insets)));
         deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(title);
         Nodes.add(title);
         
@@ -132,7 +132,7 @@ public final class ModpackView {
         
         //right rectangle
         background = new Rectangle();
-        background.setFill(pack.getTitleColor());
+        //background.setFill(pack.getTitleColor());
         background.setLayoutX(galleryX + gallerySizeX + defaultgap * 1.5);
         background.setLayoutY(galleryY);
         background.setWidth(ModpackSelector.posX - galleryX - gallerySizeX - defaultgap * 5);
@@ -152,7 +152,7 @@ public final class ModpackView {
         notesSizeY = (int) deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getPrefHeight() - notesY - defaultgap;
         
         patchNotesBack = new Rectangle();
-        patchNotesBack.setFill(pack.getTitleColor());
+        //patchNotesBack.setFill(pack.getTitleColor());
         patchNotesBack.setLayoutX(notesX);
         patchNotesBack.setLayoutY(notesY);
         patchNotesBack.setWidth(notesSizeX);
@@ -245,6 +245,7 @@ public final class ModpackView {
         
         StartTile = new DCTile(startX, startY, startSizeX, startSizeY, imgStart, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
         StartTile.setBackgroundColor(Color.TRANSPARENT);
+        Nodes.addAll(StartTile.getNodes());
         deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(StartText);
         StartText.setOnMouseEntered((MouseEvent e) -> {
                 StartTile.handleHover(true, e);
@@ -321,7 +322,7 @@ public final class ModpackView {
             gallery.hide();
             
             gallery = new Gallery(galleryX, galleryY, gallerySizeX, gallerySizeY);
-            gallery.addImage(pack.getScreenshots());
+            //gallery.addImage(pack.getScreenshots());
             gallery.show();
             Nodes.addAll(gallery.getNodes());
 
@@ -361,13 +362,17 @@ public final class ModpackView {
         pack.handleStart();
     }
     
-    public void setStartVisible(boolean State) {
+    private void setStartVisible(boolean State) {
+        
+        if (!this.Visible) {
+            return;
+        }
         
         StartTile.setVisible(State);
         StartText.setVisible(State);
     }
     
-    public void setStartLocked(String Text) {
+    private void setStartLocked(String Text) {
         StartText.setText(Text);
         if (Text.length() > 5) {
             StartText.setFont(DesignHelpers.getFocusFont(14));
@@ -377,7 +382,7 @@ public final class ModpackView {
         StartTile.setImage(new Image(getClass().getResource("/deincraftlauncher/Images/start_locked.png").toString()));
     }
     
-    public void setStartUnLocked(String Text) {
+    private void setStartUnLocked(String Text) {
         
         StartText.setFont(DesignHelpers.getFocusFont());
         StartText.setText(Text);
@@ -385,7 +390,7 @@ public final class ModpackView {
         StartTile.setImage(new Image(getClass().getResource("/deincraftlauncher/Images/start.png").toString()));
     }
     
-    public void setStartLoading(boolean state) {
+    private void setStartLoading(boolean state) {
         this.Loading = state;
         
         setStartVisible(!state);
@@ -397,8 +402,10 @@ public final class ModpackView {
             loadingb.setFitWidth(64);
             loadingb.setFitHeight(64);
             loadingb.setImage(new Image(getClass().getResource("/deincraftlauncher/Images/loading.gif").toString()));
-            Nodes.add(loadingb);
-            deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(loadingb);
+            if (this.Visible) {
+                Nodes.add(loadingb);
+                deincraftlauncher.FXMLSheetController.getInstance().mainPanel.getChildren().add(loadingb);
+            }
         } else {
             System.out.println("removing start loading icon");
             Nodes.remove(loadingb);

@@ -5,6 +5,15 @@
  */
 package deincraftlauncher.IO;
 
+import deincraftlauncher.modPacks.settings;
+import fr.theshark34.openauth.AuthPoints;
+import fr.theshark34.openauth.AuthenticationException;
+import fr.theshark34.openauth.Authenticator;
+import fr.theshark34.openauth.model.AuthAgent;
+import fr.theshark34.openauth.model.response.AuthResponse;
+import fr.theshark34.openlauncherlib.minecraft.AuthInfos;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.chris54721.openmcauthenticator.OpenMCAuthenticator;
 import net.chris54721.openmcauthenticator.exceptions.AuthenticationUnavailableException;
 import net.chris54721.openmcauthenticator.exceptions.InvalidCredentialsException;
@@ -21,6 +30,7 @@ public class MCAuthentication {
     public static boolean isValidLogin(String Username, String Password) {
         try {
             AuthenticationResponse authResponse = OpenMCAuthenticator.authenticate(Username, Password);
+            
             String authToken = authResponse.getAccessToken();
         } catch (RequestException | AuthenticationUnavailableException e) {
             if (e instanceof AuthenticationUnavailableException) {
@@ -62,29 +72,17 @@ public class MCAuthentication {
         return "";
     }
     
-    public static String getUUID(String Username, String Password) {
-        
+    public static void setLegacyName(String Username, String PW) {
         try {
-            AuthenticationResponse authResponse = OpenMCAuthenticator.authenticate(Username, Password);
-            RefreshResponse refreshResponse = OpenMCAuthenticator.refresh(authResponse.getAccessToken(), authResponse.getClientToken());
-            String UUID = authResponse.getSelectedProfile().getUUID().toString();
+            Authenticator authenticator = new Authenticator(Authenticator.MOJANG_AUTH_URL, AuthPoints.NORMAL_AUTH_POINTS);
+            AuthResponse rep = authenticator.authenticate(AuthAgent.MINECRAFT, Username, PW, "");
+            AuthInfos authInfos = new AuthInfos(rep.getSelectedProfile().getName(), rep.getAccessToken(), rep.getSelectedProfile().getId());
+            System.out.println("legacyName=" + authInfos.getUsername());
             
-            System.out.println("Mc Authentication done! + UUID=" + UUID);
-            System.out.println("is valid Token:" + OpenMCAuthenticator.validate(UUID));
-            return UUID;
-            
-        } catch (RequestException | AuthenticationUnavailableException e) {
-            if (e instanceof AuthenticationUnavailableException) {
-                System.err.println("Minecraft servers unavaible");
-                return "";
-            }
-            if (e instanceof InvalidCredentialsException) {
-                System.err.println("invalid username or password");
-                return "";
-              
-            }
+            settings.getInstance().NickName = authInfos.getUsername();
+        } catch (AuthenticationException ex) {
+            Logger.getLogger(MCAuthentication.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return "";
     }
     
 }

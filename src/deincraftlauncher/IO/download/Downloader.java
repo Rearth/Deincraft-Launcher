@@ -16,6 +16,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -320,6 +321,14 @@ public class Downloader {
 
     public Thread getDownloadThread() {
         return downloadThread;
+    }
+    
+    public static void direectDownload(String Link, String targetFile) {
+        try {
+            FileUtils.copyURLToFile(new URL(Link), new File(targetFile));
+        } catch (IOException ex) {
+            Logger.getLogger(Downloader.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }

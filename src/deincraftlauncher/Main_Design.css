@@ -1,0 +1,76 @@
+.borderMenuBackground {
+    -fx-opacity: 0.39;
+    -fx-fill: lightgray;
+}
+
+.MenuLabel {
+    -fx-text-fill: rgb(227, 227, 227);
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255,0.5), 10, 0.3, 0, 0);
+}
+
+.MenuLabel:hover {
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255,0.5), 15, 0.6, 0, 0);
+}
+
+.MenuLabel:pressed {
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255,0.5), 15, 0.6, 0, 0);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-translate-y: -3;
+}
+
+.CardTitle {
+    -fx-text-fill: white;
+}
+
+.CardContent {
+    -fx-text-fill: white;
+}
+
+.exitItem {
+
+}
+
+
+.exitItem:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 155, 155, 0.5), 8, 0.6, 0, 0);
+}
+
+.exitItem:pressed {
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 155, 155, 0.5), 12, 0.6, 0, 0);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-translate-y: -2;
+}
+
+.progress-bar > .bar {
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-background-paddings: 0;
+    -fx-padding: 0.20em;
+    -fx-accent: rgba(52, 102, 185, 0.9);
+    -fx-box-border: transparent;
+}
+
+.progress-bar > .track {
+    -fx-background-radius: 0;
+    -fx-text-box-border: transparent;
+    -fx-control-inner-background: transparent;
+}
+
+.MenuLabelFocus {
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255,0.5), 15, 0.6, 0, 0);
+}
+
+.scroll-pane > .viewport {
+    -fx-opacity: 0.39;
+    -fx-background-color: lightgray;
+}
+
+.scroll-pane {
+    -fx-opacity: 0.39;
+    -fx-background-color: lightgray;
+}

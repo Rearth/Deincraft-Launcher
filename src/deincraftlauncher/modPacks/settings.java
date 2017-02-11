@@ -21,7 +21,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -55,6 +54,7 @@ public class settings implements Serializable {
 
     public String Username = "error";
     public String Password = "error";
+    public String NickName = "error";
     public int RAM = 4096;
     
     
@@ -113,8 +113,10 @@ public class settings implements Serializable {
 
     @Override
     public String toString() {
-        return "settings{" + "Username=" + Username + ", Password=" + Password + ", RAM=" + RAM + '}';
+        return "settings{" + "Username=" + Username + ", Password=" + Password + ", NickName=" + NickName + ", RAM=" + RAM + '}';
     }
+    
+    
 
     public static String getUsername() {
         return instance.Username;

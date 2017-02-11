@@ -6,14 +6,9 @@
 package deincraftlauncher.modPacks;
 
 import deincraftlauncher.designElements.DCTile;
-import deincraftlauncher.designElements.DesignHelpers;
-import static deincraftlauncher.designElements.DesignHelpers.defaultgap;
+import deincraftlauncher.designElements.PackViewHandler;
 import java.util.ArrayList;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
 
 /**
  *
@@ -23,19 +18,15 @@ public class ModpackSelector {
     
     private AnchorPane pane = null;
     private static final ModpackSelector instance = new ModpackSelector();
-    private static final int iconSize = 74;
-    public static final int posX = 644 - iconSize - defaultgap;
-    private static final int topGap = 38;
-    private static final int exitSize = 40;
-    private static final int optionHeight = 60;
+    private static final int iconSize = 82;
+    public static final int posX = 14;
+    private static final int topGap = 120;
     
     private final ArrayList<Modpack> Modpacks = new ArrayList<>();
     private final ArrayList<DCTile> Tiles = new ArrayList<>();
     private final ArrayList<Integer> usedIndex = new ArrayList<>();
-    private final Rectangle background = new Rectangle();
     
     public Modpack selectedPack = null;
-    private boolean labelShort = false;
     
     public static ModpackSelector getInstance() {
         return instance;
@@ -43,13 +34,13 @@ public class ModpackSelector {
     
     public void init() {
         pane = deincraftlauncher.FXMLSheetController.getInstance().mainPanel;
-        background.setFill(DesignHelpers.foreGround);
+        /*background.setFill(DesignHelpers.foreGround);
         background.setLayoutX(posX - defaultgap);
         background.setLayoutY(0);
         background.setWidth(iconSize + 2 * defaultgap);
         background.setHeight(pane.getPrefHeight());
         background.setVisible(true);
-        pane.getChildren().add(background);
+        pane.getChildren().add(background);*/
     }
     
     private ModpackSelector() {
@@ -74,7 +65,7 @@ public class ModpackSelector {
     }
     
     private int calcY(int index) {
-        return defaultgap + defaultgap * index + iconSize * index + topGap;
+        return 40 * index + iconSize * index + topGap;
     }
     
     private int freeY() {
@@ -99,82 +90,25 @@ public class ModpackSelector {
     
     private void selectPack(DCTile tileClicked) {
         System.out.println("Tile Klicked: " + tileClicked.getName());
-        for (Modpack pack : Modpacks) {
-            pack.hide();
-        }
+        
         Modpacks.get(Tiles.indexOf(tileClicked)).select();
-        if (labelShort) {
-            shortenLabels();
-        }
         
-    }
-    
-    public int getBottomEnd() {
-        return Tiles.get(Tiles.size() - 1).getPosY() + Tiles.get(Tiles.size() - 1).getHeight();
-    }
-    
-    public void addEnds() {
-                
-        Image exitImg = new Image(getClass().getResource("/deincraftlauncher/Images/exit.png").toString());
-        DCTile exit = new DCTile(ModpackSelector.posX + iconSize + 1 * defaultgap - exitSize, 0, exitSize, exitImg, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
-        exit.setBackgroundColor(Color.TRANSPARENT);
-        exit.setOnClick(this::handleExit);
-        //exit.setShadow(false);
-        
-        Image minimizeImg = new Image(getClass().getResource("/deincraftlauncher/Images/minimize.png").toString());
-        DCTile minimize = new DCTile(ModpackSelector.posX - defaultgap, 0, (ModpackSelector.posX + iconSize + 1 * defaultgap - exitSize) - (ModpackSelector.posX - defaultgap) - defaultgap / 2, exitSize, minimizeImg, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
-        minimize.setBackgroundColor(Color.TRANSPARENT);
-        minimize.setOnClick(this::handleMinimize);
-        //minimize.setShadow(false);
-        
-        
-        Image optImg = new Image(getClass().getResource("/deincraftlauncher/Images/Settings-Tile.png").toString());
-        DCTile opt = new DCTile(ModpackSelector.posX - defaultgap, (int) pane.getPrefHeight() - optionHeight, iconSize + 2 * defaultgap, optionHeight, optImg, deincraftlauncher.FXMLSheetController.getInstance().mainPanel);
-        opt.setBackgroundColor(Color.TRANSPARENT);
-        opt.setOnClick(this::handleOptionClick);
-        System.out.println("Dimensions:" + opt.getHeight() + " | " + opt.getWidth());
-    }
-    
-    private void handleExit(DCTile tileClicked) {
-        System.out.println("pressed exit Tile");
-        deincraftlauncher.FXMLSheetController.getInstance().exit();
-    }
-    
-    private void handleOptionClick(DCTile tileClicked) {
-        System.out.println("opening settings");
-        settings.showWindow();
-    }
-    
-    private void handleMinimize(DCTile tileClicked) {
-        ((Stage) background.getScene().getWindow()).setIconified(true);
-    }
-    
-    public void shortenLabels() {
-        selectedPack.getView().setPatchNotesSmall(true);
-        labelShort = true;
-    }
-    
-    public void normalLabels() {
-        selectedPack.getView().setPatchNotesSmall(false);
-        labelShort = false;
-    }
-    
-    public void reloadScreenshots() {
-        for (Modpack pack : Modpacks) {
-            pack.reloadScreenshots();
-        }
     }
     
     public void setStartLoading(boolean state) {
-        for (Modpack pack : Modpacks) {
-            pack.getView().setStartLoading(state);
-        }
+        PackViewHandler.setStartLoading(state);
     }
     
     public ArrayList<Modpack> getPacks() {
         
         return Modpacks;
         
+    }
+    
+    public void setVisible(boolean state) {
+        for (DCTile tile : Tiles) {
+            tile.setVisible(state);
+        }
     }
     
 }

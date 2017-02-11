@@ -5,6 +5,7 @@
  */
 package deincraftlauncher.IO.download;
 
+import deincraftlauncher.designElements.PackViewHandler;
 import deincraftlauncher.modPacks.Modpack;
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +46,7 @@ public class FTPSync {
         }
         
         DownloadHandler.setStartBlocked(true);
-        pack.getView().setStartLoading(true);
+        PackViewHandler.setStartLoading(true);
         
         System.out.println("starting ftp sync for folder " + folder + "| " + FTPDir);
         
@@ -107,7 +108,7 @@ public class FTPSync {
         }
         DownloadHandler.setStartBlocked(false);
         Platform.runLater(() -> {
-            pack.getView().setStartLoading(false);
+            PackViewHandler.setStartLoading(false);
         });
         Platform.runLater(DownloadHandler::start);
     }

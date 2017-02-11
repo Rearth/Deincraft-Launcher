@@ -6,28 +6,20 @@
 package deincraftlauncher.designElements;
 
 import deincraftlauncher.FXMLSheetController;
-import static deincraftlauncher.designElements.DesignHelpers.getShadowEffect;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.animation.ScaleTransition;
-import javafx.animation.TranslateTransition;
-import javafx.event.ActionEvent;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import static deincraftlauncher.designElements.DesignHelpers.getShadowEffect;
 
 /**
  *
@@ -46,7 +38,6 @@ public class DCTile {
     private int height;
     private Image image;
     private int width;
-    private String Text;
     private boolean focused = false;
     private String Name = "";
     private boolean focusable = true;
@@ -57,7 +48,6 @@ public class DCTile {
         this.height = height;
         this.image = imagefile;
         this.width = width;
-        this.Text = Text;
         
         
         imageLabel = new ImageView();
@@ -69,6 +59,7 @@ public class DCTile {
             imageLabel.setFitWidth(width);
             pane.getChildren().add(imageLabel);
             imageLabel.setVisible(true);
+            imageLabel.setEffect(DesignHelpers.getShadowEffect());
             
             imageLabel.setOnMouseExited((MouseEvent e) -> {
                 handleHover(false, e);
@@ -148,14 +139,6 @@ public class DCTile {
     private void setWidth(int width) {
         this.width = width;
     }
-
-    public String getText() {
-        return Text;
-    }
-
-    public void setText(String Text) {
-        this.Text = Text;
-    }
     
     public void setVisible(boolean state) {
         imageLabel.setVisible(state);
@@ -163,7 +146,7 @@ public class DCTile {
 
     @Override
     public String toString() {
-        return "DCTile{" + "posX=" + posX + ", posY=" + posY + ", height=" + height + ", image=" + image + ", width=" + width + ", Text=" + Text + '}';
+        return "DCTile{" + "posX=" + posX + ", posY=" + posY + ", height=" + height + ", image=" + image + ", width=" + width + '}';
     }
     
     private boolean AnimPlaying = false;

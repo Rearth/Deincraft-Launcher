@@ -34,7 +34,7 @@ import javafx.util.Duration;
  */
 public class TextButton {
     
-    private static final Font font = DesignHelpers.getFocusFont(18);
+    private static final Font font = DesignHelpers.getFocusFont(14);
     private static final java.awt.Font fonthere = new java.awt.Font("Roman", java.awt.Font.BOLD, 23);
     private static final double scaleTo = 1.08;
     private static final Color textColor = Color.WHITE;
