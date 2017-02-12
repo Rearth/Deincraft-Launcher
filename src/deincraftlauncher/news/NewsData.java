@@ -33,7 +33,7 @@ public class NewsData implements Serializable {
     private static final long serialVersionUID = 12348765434689L;
     
     private final ArrayList<NewsElement> elements = new ArrayList<>();
-    private ArrayList<String> read = new ArrayList<>();
+    private static ArrayList<String> read = new ArrayList<>();
     public Date lastOpened;
     
     private NewsData() {}
@@ -83,6 +83,8 @@ public class NewsData implements Serializable {
     }
     
     public static void save() {
+        
+        System.out.println("saving");
         
         File existing = new File(Config.getLauncherFolder());
         if (!existing.exists()) {

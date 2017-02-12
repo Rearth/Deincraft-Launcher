@@ -290,9 +290,18 @@ public class NewsHandler {
     }
     
     private static void showUnread() {
-        if (NewsData.getInstance().lastOpened == null) {
+        
+        System.out.println("showing unread symbol");
+        
+        if (NewsData.getInstance().lastOpened == null || NewsData.getInstance().getRead().isEmpty()) {
+            System.out.println("not opened before...");
             NewsData.getInstance().lastOpened = new Date();
+            NewsData.getInstance().lastOpened.setYear(2000);
             NewsData.save();
+            
+            UI.unreadNotes.setVisible(true);
+            UI.unreadNotes.setText(Integer.toString(NewsData.getInstance().getElements().size()));
+            return;
         }
         //int notRead = NewsData.getInstance().getElements().size() - NewsData.getInstance().getRead().size();
         int notRead = 0;
@@ -305,6 +314,7 @@ public class NewsHandler {
         }
         
         System.out.println("showing unread num" + notRead);
+        
         
         if (notRead >= 1) {
             System.out.println("more than 1 unread item, displaying num (" + notRead + ")");
