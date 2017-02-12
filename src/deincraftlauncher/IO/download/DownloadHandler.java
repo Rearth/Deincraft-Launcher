@@ -312,5 +312,9 @@ public class DownloadHandler {
         preparing.clear();
         
     }
+
+    public static boolean isActive() {
+        return active;
+    }
     
 }

@@ -102,6 +102,20 @@ public class FXMLSheetController implements Initializable {
     public Pane ModpackPane;
     @FXML
     public ScrollPane NewsPane;
+    @FXML
+    public Pane ScrollPaneContent;
+    @FXML
+    public Rectangle newsSeparator;
+    @FXML
+    public Rectangle menuRect;
+    @FXML
+    public Label NewsContentTitle;
+    @FXML
+    public Label NewsContentText;
+    @FXML
+    public Label unreadNotes;
+    @FXML
+    public Label newsDate;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -144,6 +158,8 @@ public class FXMLSheetController implements Initializable {
         
         initFonts();
         initStartButton();
+        initWindowDrag();
+        initAnims();
         playerLabel.setText(settings.getInstance().NickName);
         PackViewHandler.initialSelect();
         
@@ -258,6 +274,10 @@ public class FXMLSheetController implements Initializable {
         setFont(startButton);
         setFont(progressTextRight);
         setFont(progressTextLeft);
+        setFont(NewsContentTitle);
+        setFont(NewsContentText);
+        setFont(unreadNotes);
+        setFont(newsDate);
         packImage.setEffect(DesignHelpers.getShadowEffect());  
         startRect.setEffect(DesignHelpers.getShadowEffect());  
         
@@ -298,6 +318,32 @@ public class FXMLSheetController implements Initializable {
             focusAnim(scaleTo, 1.0, 120);
             
         }
+        
+    }
+    
+    public void handleHover(boolean entered, MouseEvent e, Node node) {
+        
+        double scaleTo = 1.1;
+        
+        if (entered) {
+            focusAnim(1.0, scaleTo, 120, node);
+        } else {
+            focusAnim(scaleTo, 1.0, 120, node);
+            
+        }
+        
+    }
+    
+    private void focusAnim(double from, double to, int time, Node node) {
+        
+        ScaleTransition scaleanim = new ScaleTransition(Duration.millis(time), node);
+        scaleanim.setFromX(from);
+        scaleanim.setToX(to);
+        scaleanim.setFromY(from);
+        scaleanim.setToY(to);
+        scaleanim.setCycleCount(1);
+        scaleanim.setAutoReverse(true);
+        scaleanim.play();
         
     }
     
@@ -348,6 +394,25 @@ public class FXMLSheetController implements Initializable {
         newsSelected = true;
         System.out.println("showing modpack views");
         
+    }
+    
+    private static double xOffset = 0;
+    private static double yOffset = 0;
+
+    private void initWindowDrag() {
+        menuRect.setOnMousePressed((MouseEvent event) -> {
+            xOffset = DeincraftLauncherUI.window.getX() - event.getScreenX();
+            yOffset = DeincraftLauncherUI.window.getY() - event.getScreenY();
+        });
+        
+        menuRect.setOnMouseDragged((MouseEvent event) -> {
+            DeincraftLauncherUI.window.setX(event.getScreenX() + xOffset);
+            DeincraftLauncherUI.window.setY(event.getScreenY() + yOffset);
+        });
+    }
+    
+    private void initAnims() {
+        //noStuff
     }
     
 }

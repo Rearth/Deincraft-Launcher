@@ -18,6 +18,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +33,8 @@ public class NewsData implements Serializable {
     private static final long serialVersionUID = 12348765434689L;
     
     private final ArrayList<NewsElement> elements = new ArrayList<>();
-    private final ArrayList<NewsElement> read = new ArrayList<>();
+    private ArrayList<String> read = new ArrayList<>();
+    public Date lastOpened;
     
     private NewsData() {}
     
@@ -42,31 +45,39 @@ public class NewsData implements Serializable {
     }
     
     public static void addItem(String packName, String Title, String Text) {
-        NewsElement elem = new NewsElement(packName, Title, Text);
+        NewsElement elem = new NewsElement(packName, Title, Text, new Date());
         System.out.println("added Item: " + elem);
         instance.elements.add(elem);
         save();
     }
     
-    public static class NewsElement implements Serializable {
+    public static class NewsElement implements Serializable, Comparable<NewsElement> {
         
         private static final long serialVersionUID = 852364761L;
         
-        public NewsElement(String packName, String Title, String Text) {
+        public NewsElement(String packName, String Title, String Text, Date date) {
             
             this.belonging = packName;
             this.Title = Title;
             this.Text = Text.replace("\\n", System.getProperty("line.separator"));
             System.out.println("Text=" + this.Text);
+            this.date = date;
+            System.out.println("NewsElement added at: " + date);
         }
         
         public final String belonging;
         public final String Title;
         public final String Text;
+        public final Date date;
 
         @Override
         public String toString() {
             return "NewsElement{" + ", belonging=" + belonging + ", Title=" + Title + ", Text=" + Text + '}';
+        }
+
+        @Override
+        public int compareTo(NewsElement o) {
+            return o.date.compareTo(date);
         }
         
     }
@@ -89,12 +100,32 @@ public class NewsData implements Serializable {
         
         try (ObjectOutputStream ous = new ObjectOutputStream(new FileOutputStream(Config.getNewsFile()))) {
 
-            System.out.println("saving news " + instance);
+            //System.out.println("saving news " + instance);
             
             ous.writeObject(instance);
 
         } catch (Exception ex) {
             System.err.println("Error saving news: " + ex);
+        }
+        
+        try (ObjectOutputStream ous = new ObjectOutputStream(new FileOutputStream(Config.getNewsFile() + "personal"))) {
+
+            //System.out.println("saving news " + instance);
+            
+            ous.writeObject(instance.read);
+
+        } catch (Exception ex) {
+            System.err.println("Error saving news personal: " + ex);
+        }
+        
+        try (ObjectOutputStream ous = new ObjectOutputStream(new FileOutputStream(Config.getNewsFile() + "date"))) {
+
+            //System.out.println("saving news " + instance);
+            
+            ous.writeObject(instance.lastOpened);
+
+        } catch (Exception ex) {
+            System.err.println("Error saving news date: " + ex);
         }
         
     }
@@ -112,6 +143,22 @@ public class NewsData implements Serializable {
 
         } catch (Exception ex) {
             System.err.println("Error loading news: " + ex);
+        }
+        
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(Config.getNewsFile() + "personal"))) {
+
+            instance.read = (ArrayList<String>) ois.readObject();
+
+        } catch (Exception ex) {
+            System.err.println("Error loading news personal: " + ex);
+        }
+        
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(Config.getNewsFile() + "date"))) {
+
+            instance.lastOpened = (Date) ois.readObject();
+
+        } catch (Exception ex) {
+            System.err.println("Error loading news date: " + ex);
         }
         
         System.out.println("Read news file" + instance.toString());
@@ -135,8 +182,58 @@ public class NewsData implements Serializable {
         return elements;
     }
 
-    public ArrayList<NewsElement> getRead() {
+    public ArrayList<String> getRead() {
         return read;
+    }
+    
+    public enum relativeDays {
+        Heute, Gestern
+    }
+    
+    public enum Monate {
+        Jan, Feb, März, Apr, Mai, Jun, Jul, Aug, Sep, Okt, Nov, Dez
+    }
+    
+    //in days
+    public static int howLongAgo(Date date) {
+        
+        Date olddate = new Date();
+        olddate.setDate(date.getDate());
+        olddate.setMonth(date.getMonth());
+        olddate.setYear(date.getYear());
+                        
+        long difference =  new Date().getTime() - olddate.getTime();
+
+        return (int) (difference / (24 * 1000 * 60 * 60));
+            
+    }
+
+    public static int getDayNumber(Date date) {
+         Calendar c = Calendar.getInstance();
+         c.setTime(date);
+
+         return c.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public static int getMonthNumber(Date date) {
+         Calendar c = Calendar.getInstance();
+         c.setTime(date);
+
+         return c.get(Calendar.MONTH);
+    }
+    
+    public static String getFormat(Date date) {
+        if (howLongAgo(date) == 0) {
+            return relativeDays.Heute.name();
+        } else if (howLongAgo(date) == 1) {
+            return relativeDays.Gestern.name();
+        } else if (howLongAgo(date) < 7) {
+            return Integer.toString(howLongAgo(date)) + " Tage";
+        }
+        
+        String month = Monate.values()[getMonthNumber(date) - 1].name();
+        
+        return getDayNumber(date) + ". " + month;
     }
     
 }

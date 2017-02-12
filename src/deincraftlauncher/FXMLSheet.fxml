@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
@@ -17,7 +18,7 @@
             <Image url="@Images/wallpaper_grass.jpg" />
          </image>
       </ImageView>
-      <Rectangle height="85.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" styleClass="borderMenuBackground" width="1300.0" />
+      <Rectangle fx:id="menuRect" height="85.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" styleClass="borderMenuBackground" width="1300.0" />
       <Pane fx:id="ModpackPane" layoutY="85.0">
          <children>
             <Rectangle fx:id="startRect" fill="#3866b9" height="67.0" layoutX="192.0" layoutY="505.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="195.0" />
@@ -134,10 +135,31 @@
             <Font name="Eras Bold ITC" size="20.0" />
          </font>
       </Label>
-      <ScrollPane fx:id="NewsPane" layoutY="89.0" prefHeight="601.0" prefWidth="236.0" visible="false">
+      <Rectangle fx:id="newsSeparator" fill="#c9c9c9" height="601.0" layoutX="312.0" layoutY="89.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" visible="false" width="4.0" />
+      <ScrollPane fx:id="NewsPane" hbarPolicy="NEVER" layoutY="89.0" pannable="true" prefHeight="601.0" prefWidth="312.0" vbarPolicy="NEVER" visible="false">
          <content>
-            <VBox prefHeight="600.0" prefWidth="235.0" />
+            <Pane fx:id="ScrollPaneContent" />
          </content>
       </ScrollPane>
+      <Label fx:id="NewsContentTitle" alignment="CENTER" layoutX="316.0" layoutY="89.0" prefHeight="146.0" prefWidth="982.0" text="Titel" textAlignment="CENTER" textFill="WHITE" visible="false">
+         <font>
+            <Font size="50.0" />
+         </font>
+      </Label>
+      <Label fx:id="NewsContentText" alignment="TOP_LEFT" layoutX="326.0" layoutY="238.0" prefHeight="444.0" prefWidth="968.0" text="Some random Text" textFill="#ffffffb9" visible="false" wrapText="true">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="unreadNotes" layoutX="505.0" layoutY="23.0" styleClass="patchNotesUnread" text="3" textFill="WHITE">
+         <padding>
+            <Insets left="2.0" right="2.0" />
+         </padding>
+      </Label>
+      <Label fx:id="newsDate" alignment="TOP_RIGHT" layoutX="1190.0" layoutY="96.0" prefHeight="61.0" prefWidth="100.0" text="3. Aug" textAlignment="RIGHT" textFill="#ffffff9b" visible="false">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

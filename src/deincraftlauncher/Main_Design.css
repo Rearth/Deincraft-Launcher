@@ -4,21 +4,12 @@
 }
 
 .MenuLabel {
-    -fx-text-fill: rgb(227, 227, 227);
-    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255,0.5), 10, 0.3, 0, 0);
+    -fx-text-fill: rgb(207, 207, 207);
 }
 
 .MenuLabel:hover {
     -fx-text-fill: white;
     -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255,0.5), 15, 0.6, 0, 0);
-}
-
-.MenuLabel:pressed {
-    -fx-text-fill: white;
-    -fx-effect: dropshadow(three-pass-box, rgba(255, 255, 255,0.5), 15, 0.6, 0, 0);
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
-    -fx-translate-y: -3;
 }
 
 .CardTitle {
@@ -66,11 +57,24 @@
 }
 
 .scroll-pane > .viewport {
-    -fx-opacity: 0.39;
-    -fx-background-color: lightgray;
+   -fx-background-color: transparent;
 }
 
 .scroll-pane {
-    -fx-opacity: 0.39;
-    -fx-background-color: lightgray;
+   -fx-background-color: rgba(201, 201, 201, 0.25);
+}
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-unit-increment: 10 ;
+    -fx-block-increment: 50 ;
+}
+
+.scroll-pane .scroll-bar:horizontal {
+    -fx-unit-increment: 5 ;
+    -fx-block-increment: 20 ;
+}
+
+.patchNotesUnread {
+    -fx-background-color: red;
+    -fx-background-radius: 2;
 }

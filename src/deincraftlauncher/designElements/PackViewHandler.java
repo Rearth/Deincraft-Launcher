@@ -6,6 +6,7 @@
 package deincraftlauncher.designElements;
 
 import deincraftlauncher.FXMLSheetController;
+import deincraftlauncher.IO.download.DownloadHandler;
 import deincraftlauncher.modPacks.Modpack;
 import deincraftlauncher.modPacks.ModpackSelector;
 import javafx.application.Platform;
@@ -28,8 +29,7 @@ public class PackViewHandler {
     
     public static void showPack(Modpack pack) {
         
-        
-        UI.PatchNotesTitle.setText(pack.getName().toLowerCase() + " patchnotes");
+        UI.PatchNotesTitle.setText(pack.getName().toLowerCase() + " news");
         UI.PatchNotesContent.setText(pack.getNews().toLowerCase());
         
     }
@@ -75,6 +75,13 @@ public class PackViewHandler {
     }
     
     public static void setStartUnLocked(String Text) {
+        
+        if (DownloadHandler.isActive()) {
+            System.out.println("attempted to unlock start while downloading...");
+            UI.startButton.setText("Downloade");
+            UI.startButton.setFont(DesignHelpers.getFocusFont(14));
+            UI.startRect.setFill(Color.GRAY);
+        }
         
         UI.startButton.setFont(DesignHelpers.getFocusFont());
         UI.startButton.setText(Text);

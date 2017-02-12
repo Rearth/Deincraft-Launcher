@@ -51,141 +51,16 @@ public class StartMinecraft {
         
     }
     
-    /*public static void createCaches(Modpack pack) {
-        
-        System.out.println("creating caches, adding natives to download queue");
-        Downloader nativesLoader = new Downloader(nativesLink, pack.getCaches());
-        nativesLoader.start();
-        nativesLoader.setOnFinished((Downloader loader) -> {
-            onNativesDownloaded(loader, pack);
-        });
-        
-        System.out.println("creating assets, libs and versions...");
-        Path caches = new File(pack.getCaches()).toPath();
-        uk.co.rx14.jmclaunchlib.caches.MinecraftCaches.create(caches);
-        System.out.println("offline part done, waiting for natives");
-        
-        try {
-            //CacheNatives(pack);
-            nativesLoader.getDownloadThread().join(30000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        System.out.println("all caches done");
-    }
-    
-    private static void onNativesDownloaded(Downloader loader, Modpack pack) {
-        try {
-            ZIPExtractor.extractArchive(loader.getTargetFile(), pack.getCaches());
-        } catch (Exception ex) {
-            Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public static void CacheNatives(Modpack pack) {
-        
-        try {
-            System.out.println("creating natives");
-            LaunchTask task = new LaunchTaskBuilder()
-                    .setOffline()
-                    .setNetOffline()
-                    .setCachesDir(pack.getPath() + "Cache")
-                    .setForgeVersion("1.7.10", pack.getForgeVersion())
-                    .setInstanceDir(pack.getPath())
-                    .setUsername(settings.getUsername())
-                    .setPasswordSupplier(new MCPasswordSupplier())
-                    .build();
-            
-            
-            LaunchSpec spec = task.getSpec();
-            
-            Process run = spec.run(new File(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe").toPath());
-            
-            BufferedReader stdout = new BufferedReader(new InputStreamReader(run.getInputStream()));
-            String line;
-            
-            while ((line = stdout.readLine()) != null) {
-                System.out.println(line);
-                if (line.contains("Loading tweak class name cpw.mods.fml.common.launcher.FMLTweaker")) {
-                    run.destroyForcibly();
-                }
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }*/
-    
     public static void startMC(Modpack pack) {
         
-        //http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.7.10-10.13.4.1558-1.7.10/forge-1.7.10-10.13.4.1558-1.7.10-universal.jar
-        /*try {
-
-        System.out.println("pack starting: " + pack.getName() + " path=" + pack.getPath());
-        System.out.println("starting with username=" + settings.getUsername() + " password=" + settings.getPassword());
-
-        //YggdrasilAuth.auth(settings.getUsername(), settings.getPassword());
-
-        LaunchTask task = new LaunchTaskBuilder()
-        .setOffline()
-        .setNetOffline()
-        .setCachesDir(pack.getPath() + "Cache")
-        .setForgeVersion("1.7.10", pack.getForgeVersion())
-        .setInstanceDir(pack.getPath())
-        .setUsername(settings.getUsername())
-        .setPasswordSupplier(new MCPasswordSupplier())
-        .build();
-
-        System.out.println("created launch task");
-
-        new ChangePrinter(
-        () -> "" + task.getCompletedPercentage(), 100
-        ).start();
-
-        System.out.println("creating launchspec..." + Arrays.toString(task.getRemainingTasks().toArray()));
-
-        System.out.println("current task: " + task.getCurrentTasks() + task.isStarted());
-
-        LaunchSpec spec = task.getSpec();
-
-        System.out.println("starting MC process");
-        System.out.println(spec.getJavaCommandline());
-
-        Process run = spec.run(new File(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe").toPath());
-
-        BufferedReader stdout = new BufferedReader(new InputStreamReader(run.getInputStream()));
-        String line = null;
-        try {
-        while ((line = stdout.readLine()) != null) {
-        System.out.println(line);
-        if (line.contains("Completed early MinecraftForge initialization")) {
-        Platform.runLater(() -> {
-        System.out.println("minecraft starting, enabling start button");
-        pack.getView().setStartLoading(false);
-        pack.getView().setStartLocked("started");
-        });
-        } else if (isErrorCode(line)) {
-        Platform.runLater(() -> {
-        System.out.println("minecraft stopped");
-        pack.getView().setStartUnLocked("Start");
-        });
-        }
-        }
-        } catch (IOException e) {
-        System.err.println("error reading mc output " + e);
-        }
-
-
-        } catch (Exception ex) {
-        Logger.getLogger(StartMinecraft.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-
         try {
             
             System.out.println("trying to start minecraft");
             
             GameInfos infos = new GameInfos(pack.getName(), new File(pack.getPath()), new GameVersion(pack.getMCVersion(), pack.getGameType()), new GameTweak[] {GameTweak.FORGE});
             System.out.println("GameInfos done");
+            
+            System.out.println("Zugangsdaten: " + settings.getUsername() + settings.getPassword());
             
             Authenticator authenticator = new Authenticator(Authenticator.MOJANG_AUTH_URL, AuthPoints.NORMAL_AUTH_POINTS);
             AuthResponse rep = authenticator.authenticate(AuthAgent.MINECRAFT, settings.getUsername(), settings.getPassword(), "");
@@ -214,12 +89,14 @@ public class StartMinecraft {
                         System.out.println("minecraft starting, enabling start button");
                         PackViewHandler.setStartLoading(false);
                         PackViewHandler.setStartLocked("started");
+                        pack.setStarted(true);
                     });
                 } else if (isErrorCode(line)) {
                     Platform.runLater(() -> {
                         System.out.println("minecraft stopped");
                         PackViewHandler.setStartLoading(false);
                         PackViewHandler.setStartUnLocked("Start");
+                        pack.setStarted(false);
                     });
                 }
                 

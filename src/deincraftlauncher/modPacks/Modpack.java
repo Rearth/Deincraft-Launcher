@@ -53,6 +53,7 @@ public class Modpack {
     private MCQuery mcQuery;
     private String serverIP;
     private int serverPort;
+    private boolean started = false;
     
     //Server loaded things
     private String InfoFileLink;
@@ -94,6 +95,11 @@ public class Modpack {
             PackViewHandler.setStartLocked("Coming Soon");
         } else {
             PackViewHandler.setStartUnLocked("Spielen");
+        }
+        
+        if (started) {
+            PackViewHandler.setStartLoading(false);
+            PackViewHandler.setStartLocked("started");
         }
         
         Timer timer = new Timer();
@@ -516,4 +522,13 @@ public class Modpack {
             }
         }
     }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
+    }
+    
 }
