@@ -94,6 +94,8 @@ public class NewsHandler {
             for (int i=0; i < elems.size(); i += 3) {
                 NewsData.addItem(elems.get(i), elems.get(i + 1), elems.get(i + 2));
             }
+            
+           NewsData.createUploadFile();
         }
         
         maybe.delete();
@@ -142,6 +144,7 @@ public class NewsHandler {
         SliderElements.get(0).select();
         showUnread();
     }
+        
     
     public static class SliderElement {
         

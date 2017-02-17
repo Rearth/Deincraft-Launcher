@@ -238,4 +238,16 @@ public class NewsData implements Serializable {
         return getDayNumber(date) + ". " + month;
     }
     
+    public static void createUploadFile() {
+        try (ObjectOutputStream ous = new ObjectOutputStream(new FileOutputStream(Config.getNewsFile() + "toUpload"))) {
+
+            //System.out.println("saving news " + instance);
+            
+            ous.writeObject(instance);
+
+        } catch (Exception ex) {
+            System.err.println("Error saving news upload file: " + ex);
+        }
+    }
+    
 }
