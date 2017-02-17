@@ -84,23 +84,15 @@ public class StartMinecraft {
             
             while ((line = stdout.readLine()) != null) {
                 System.out.println(line);
-                if (line.contains("Completed early MinecraftForge initialization")) {
-                    Platform.runLater(() -> {
-                        System.out.println("minecraft starting, enabling start button");
-                        PackViewHandler.setStartLoading(false);
-                        PackViewHandler.setStartLocked("started");
-                        pack.setStarted(true);
-                    });
-                } else if (isErrorCode(line)) {
-                    Platform.runLater(() -> {
-                        System.out.println("minecraft stopped");
-                        PackViewHandler.setStartLoading(false);
-                        PackViewHandler.setStartUnLocked("Start");
-                        pack.setStarted(false);
-                    });
-                }
-                
             }
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    pack.setStartState(PackViewHandler.StartState.Loading);
+                    pack.setStartText("gestartet");
+                }
+            }, 8000);
             
             checkAlive(launch, pack);
             
@@ -119,8 +111,9 @@ public class StartMinecraft {
                 if (!launch.isAlive()) {
                     Platform.runLater(() -> {
                         System.out.println("minecraft stopped, process is dead!");
-                        PackViewHandler.setStartLoading(false);
-                        PackViewHandler.setStartUnLocked("Start");
+                        pack.setPackstarted(false);
+                        pack.setStartState(PackViewHandler.StartState.Normal);
+                        pack.setStartText("Spielen");
                     });
                 } else {
                     checkAlive(launch, pack);
@@ -133,8 +126,8 @@ public class StartMinecraft {
         
         String assetsFolder = "Cache" + File.separator + "assets";
         String libsFolder = "Cache" + File.separator + "libs";
-        String nativesFolder = "Cache" + File.separator + "natives" + File.separator + "1.7.10";
-        String mainJar = "Cache" + File.separator + "versions" + File.separator + "1.7.10.jar";
+        String nativesFolder = "Cache" + File.separator + "natives" + File.separator + pack.getMCVersion();
+        String mainJar = "Cache" + File.separator + "versions" + File.separator + pack.getMCVersion() + ".jar";
         
         return new GameFolder(assetsFolder, libsFolder, nativesFolder, mainJar);
         

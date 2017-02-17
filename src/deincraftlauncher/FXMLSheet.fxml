@@ -156,7 +156,7 @@
             <Insets left="2.0" right="2.0" />
          </padding>
       </Label>
-      <Label fx:id="newsDate" alignment="TOP_RIGHT" layoutX="1190.0" layoutY="96.0" prefHeight="61.0" prefWidth="100.0" text="3. Aug" textAlignment="RIGHT" textFill="#ffffff9b" visible="false">
+      <Label fx:id="newsDate" alignment="TOP_RIGHT" layoutX="1103.0" layoutY="96.0" prefHeight="73.0" prefWidth="187.0" text="3. Aug" textAlignment="RIGHT" textFill="#ffffff9b" visible="false">
          <font>
             <Font size="18.0" />
          </font>

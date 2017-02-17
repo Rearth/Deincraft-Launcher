@@ -27,6 +27,10 @@ public class PackViewHandler {
     private static final FXMLSheetController UI = FXMLSheetController.getInstance();
     private static boolean DownloadVisible = false;
     
+    public enum StartState {
+        Locked, Loading, Normal
+    }
+    
     public static void showPack(Modpack pack) {
         
         UI.PatchNotesTitle.setText(pack.getName().toLowerCase() + " news");
@@ -39,6 +43,7 @@ public class PackViewHandler {
     }
 
     public static void updateStats(Modpack pack) {
+                
         Platform.runLater(() -> {UI.StatusServer.setText(pack.getServerState());
             if (pack.getServerState().equals("Online")) {
                 UI.StatusServer.setStyle("-fx-text-fill: green; -fx-effect: dropshadow(three-pass-box, black, 1, 1, 0, 0);");
@@ -51,13 +56,13 @@ public class PackViewHandler {
         
     }
     
-    public static void setStartVisible(boolean State) {
+    private static void setStartVisible(boolean State) {
                 
         UI.startButton.setVisible(State);
         UI.startRect.setVisible(State);
     }
     
-    public static void setStartLocked(String Text) {
+    private static void setStartLocked(String Text) {
         UI.startButton.setText(Text);
         if (Text.length() > 5) {
             UI.startButton.setFont(DesignHelpers.getFocusFont(14));
@@ -74,7 +79,7 @@ public class PackViewHandler {
         });
     }
     
-    public static void setStartUnLocked(String Text) {
+    private static void setStartUnLocked(String Text) {
         
         if (DownloadHandler.isActive()) {
             System.out.println("attempted to unlock start while downloading...");
@@ -98,7 +103,7 @@ public class PackViewHandler {
         });
     }
     
-    public static void setStartLoading(boolean state) {
+    private static void setStartLoading(boolean state) {
         
         if (startLoading && state) {
             return;
@@ -123,7 +128,7 @@ public class PackViewHandler {
         }
     }
     
-    public static void setStartText(String Text) {
+    private static void setStartText(String Text) {
         if (Text.length() > 5) {
             UI.startButton.setFont(DesignHelpers.getFocusFont(14));
         }
@@ -147,6 +152,12 @@ public class PackViewHandler {
         }
         
         ModpackSelector.getInstance().setVisible(false);
+        
+        try {
+            loadingb.setVisible(false);
+        } catch (NullPointerException ex) {
+            //expected
+        }
     }
     
     public static void show() {
@@ -162,8 +173,32 @@ public class PackViewHandler {
             UI.progressTextRight.setVisible(false);
             UI.downloadProgress.setVisible(false);
         }
+        Modpack pack = ModpackSelector.getInstance().selectedPack;
+        pack.select();
         
         ModpackSelector.getInstance().setVisible(true);
+    }
+    
+    public static void reloadStart(StartState startState, String startText, Modpack pack) {
+        if (!pack.equals(ModpackSelector.getInstance().selectedPack)) {
+            System.out.println("changed start state for not selected pack");
+            return;
+        }
+        
+        switch(startState) {
+            case Locked:
+                setStartLocked(startText);
+                setStartLoading(false);
+                break;
+            case Loading:
+                setStartLoading(true);
+                break;
+            case Normal:
+                setStartUnLocked(startText);
+                setStartLoading(false);
+                break;
+        }
+        
     }
     
 }

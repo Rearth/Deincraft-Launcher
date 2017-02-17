@@ -139,7 +139,11 @@ public class FXMLSheetController implements Initializable {
         Modpack FTBInfinity = new Modpack("FTBInfinity", infinityImage, packColor);
         FTBInfinity.setWIP(true);
         Modpack Skyfactory = new Modpack("Skyfactory", skyImage, packColor);
-        Skyfactory.setWIP(true);
+        Skyfactory.setInfoFileLink("https://onedrive.live.com/download?cid=829AE01C48100392&resid=829AE01C48100392%21134&authkey=ADSkCuh3BpX9AZI");
+        Skyfactory.setCacheLink("https://onedrive.live.com/download?cid=829AE01C48100392&resid=829AE01C48100392%21135&authkey=AOMc1B-tNZ_-R1Q");
+        Skyfactory.setForgeVersion("12.18.3.2209");
+        Skyfactory.setMCVersion("1.10.2");
+        Skyfactory.setServer("46.4.75.39", 25575);
         Modpack Vanilla = new Modpack("Vanilla", vanillaImage, packColor);
         Vanilla.setWIP(true);
         Modpack Deincraft = new Modpack("Minefactory", DCImage, packColor);
@@ -165,6 +169,8 @@ public class FXMLSheetController implements Initializable {
         
         checkForUpdates();
         NewsHandler.init();
+        
+        Deincraft.select();
         
         System.out.println("starting done");
         

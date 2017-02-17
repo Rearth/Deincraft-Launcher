@@ -6,6 +6,7 @@
 package deincraftlauncher.IO.download;
 
 import deincraftlauncher.designElements.PackViewHandler;
+import deincraftlauncher.designElements.PackViewHandler.StartState;
 import deincraftlauncher.modPacks.Modpack;
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +15,6 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
-import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
 /**
@@ -46,7 +46,7 @@ public class FTPSync {
         }
         
         DownloadHandler.setStartBlocked(true);
-        PackViewHandler.setStartLoading(true);
+        pack.setStartState(StartState.Loading);
         
         System.out.println("starting ftp sync for folder " + folder + "| " + FTPDir);
         
@@ -108,7 +108,8 @@ public class FTPSync {
         }
         DownloadHandler.setStartBlocked(false);
         Platform.runLater(() -> {
-            PackViewHandler.setStartLoading(false);
+            pack.setStartState(StartState.Locked);
+            pack.setStartText("aktualisiere");
         });
         Platform.runLater(DownloadHandler::start);
     }

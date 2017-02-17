@@ -95,10 +95,6 @@ public class ModpackSelector {
         
     }
     
-    public void setStartLoading(boolean state) {
-        PackViewHandler.setStartLoading(state);
-    }
-    
     public ArrayList<Modpack> getPacks() {
         
         return Modpacks;

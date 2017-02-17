@@ -75,6 +75,6 @@
 }
 
 .patchNotesUnread {
-    -fx-background-color: red;
+    -fx-background-color: rgba(230, 30, 30, 0.8);
     -fx-background-radius: 2;
 }

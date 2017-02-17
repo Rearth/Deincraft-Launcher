@@ -11,15 +11,14 @@ import deincraftlauncher.IO.ZIPExtractor;
 import deincraftlauncher.IO.download.DownloadHandler;
 import deincraftlauncher.IO.download.Downloader;
 import deincraftlauncher.IO.download.FTPSync;
-import deincraftlauncher.designElements.ModpackView;
 import deincraftlauncher.designElements.PackViewHandler;
+import deincraftlauncher.designElements.PackViewHandler.StartState;
 import deincraftlauncher.start.StartMinecraft;
 import static deincraftlauncher.start.StartMinecraft.hasCaches;
 import fr.theshark34.openlauncherlib.minecraft.GameType;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -37,7 +36,7 @@ import query.QueryResponse;
 public class Modpack {
     
     //works only for 1.7.10
-    private static final String CacheLink = "https://onedrive.live.com/download?cid=829AE01C48100392&resid=829AE01C48100392%21121&authkey=AKFExpNZ54gYQLc";
+    private static String CacheLink = "https://onedrive.live.com/download?cid=829AE01C48100392&resid=829AE01C48100392%21121&authkey=AKFExpNZ54gYQLc";
 
     private final String Name;
     private final Image image;
@@ -53,7 +52,9 @@ public class Modpack {
     private MCQuery mcQuery;
     private String serverIP;
     private int serverPort;
-    private boolean started = false;
+    private StartState startState = StartState.Normal;
+    private String startText = "Spielen";
+    private boolean packstarted = false;
     
     //Server loaded things
     private String InfoFileLink;
@@ -89,18 +90,21 @@ public class Modpack {
     }
     
     private void showUp() {
-        PackViewHandler.showPack(this);
         
-        if (WIP) {
-            PackViewHandler.setStartLocked("Coming Soon");
+        if (packstarted) {
+            setStartState(StartState.Locked);
+            setStartText("gestartet");
+        } else if (WIP) {
+            setStartState(StartState.Locked);
+            setStartText("Coming soon");
+        } else if (updateAvaible()) {
+            setStartText("Update");       
         } else {
-            PackViewHandler.setStartUnLocked("Spielen");
+            setStartState(StartState.Normal);
+            setStartText("Spielen");
         }
         
-        if (started) {
-            PackViewHandler.setStartLoading(false);
-            PackViewHandler.setStartLocked("started");
-        }
+        PackViewHandler.showPack(this);
         
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -185,7 +189,6 @@ public class Modpack {
         System.out.println("Handling Start action for pack " + Name + " Update: " + updateAvaible());
         
         if (updateAvaible()) {
-            PackViewHandler.setStartLocked("Downloade");
             System.out.println("Downloading update");
             if (!ModsVersion.equals(ModsVersionInstalled)) {
                 updateMods();
@@ -216,17 +219,10 @@ public class Modpack {
         
         ModsVersionInstalled = ModsVersion;
         saveConfig();
-        
-        Platform.runLater(() -> {
-            PackViewHandler.setStartLoading(true);
-        });
                 
         if (!updateAvaible()) {
-            System.out.println("Finished all files for this pack, enabling start button");
-            Platform.runLater(() -> {
-                PackViewHandler.setStartLoading(false);
-                PackViewHandler.setStartUnLocked("Start");      
-            });
+            setStartState(StartState.Normal);
+            setStartText("Spielen");
         }
     }
     
@@ -240,10 +236,8 @@ public class Modpack {
         }
         
         if (!updateAvaible()) {
-            System.out.println("Finished all files for this pack, enabling start button");
-            Platform.runLater(() -> {
-                PackViewHandler.setStartUnLocked("Start");      
-            });
+            setStartState(StartState.Normal);
+            setStartText("Spielen");
         }
     }
     
@@ -272,7 +266,8 @@ public class Modpack {
         if (!updateAvaible()) {
             System.out.println("Finished all files for this pack, enabling start button");
             Platform.runLater(() -> {
-                PackViewHandler.setStartUnLocked("Start");      
+                setStartState(StartState.Normal);
+                setStartText("Spielen"); 
             });
         }
         
@@ -282,7 +277,8 @@ public class Modpack {
         
         final Modpack thispack = this;
         
-        PackViewHandler.setStartLoading(true);
+        setStartState(StartState.Loading);
+        setPackstarted(true);
         
         Thread thread = new Thread(){
             @Override
@@ -517,18 +513,41 @@ public class Modpack {
     public void updateInfo() {
         if (ModpackSelector.getInstance().selectedPack.equals(this)) {
             PackViewHandler.setPatchNotes(News);
-            if (updateAvaible()) {
-                PackViewHandler.setStartText("Aktualisieren");
-            }
         }
     }
 
-    public boolean isStarted() {
-        return started;
+    public void setCacheLink(String CacheLink) {
+        Modpack.CacheLink = CacheLink;
     }
 
-    public void setStarted(boolean started) {
-        this.started = started;
+    public String getStartText() {
+        return startText;
+    }
+
+    public void setStartText(String startText) {
+        this.startText = startText;
+        showStart();
+    }
+
+    public StartState getStartState() {
+        return startState;
+    }
+
+    public void setStartState(StartState startState) {
+        this.startState = startState;
+        showStart();
+    }
+    
+    private void showStart() {
+        PackViewHandler.reloadStart(startState, startText, this);
+    }
+
+    public boolean isPackstarted() {
+        return packstarted;
+    }
+
+    public void setPackstarted(boolean packstarted) {
+        this.packstarted = packstarted;
     }
     
 }
