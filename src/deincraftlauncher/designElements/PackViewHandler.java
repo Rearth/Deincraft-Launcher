@@ -42,8 +42,10 @@ public class PackViewHandler {
         UI.PatchNotesContent.setText(Text);
     }
 
-    public static void updateStats(Modpack pack) {
-                
+    public static void updateStats(Modpack packi) {
+        
+        final Modpack pack = ModpackSelector.getInstance().selectedPack;
+        
         Platform.runLater(() -> {UI.StatusServer.setText(pack.getServerState());
             if (pack.getServerState().equals("Online")) {
                 UI.StatusServer.setStyle("-fx-text-fill: green; -fx-effect: dropshadow(three-pass-box, black, 1, 1, 0, 0);");
@@ -52,7 +54,7 @@ public class PackViewHandler {
             }
 
             UI.StatusPlayers.setText(pack.getPlayersOnline() + "/" + pack.getMaxPlayers()); 
-            });
+        });
         
     }
     

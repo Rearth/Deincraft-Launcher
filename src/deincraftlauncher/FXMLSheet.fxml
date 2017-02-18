@@ -19,7 +19,12 @@
          </image>
       </ImageView>
       <Rectangle fx:id="menuRect" height="85.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" styleClass="borderMenuBackground" width="1300.0" />
-      <Pane fx:id="ModpackPane" layoutY="85.0">
+      <ImageView fitHeight="28.0" fitWidth="30.0" layoutX="1260.0" layoutY="47.0" onMouseClicked="#handleOptionClick" pickOnBounds="true" preserveRatio="true" styleClass="icon">
+         <image>
+            <Image url="@Images/settings_icon.png" />
+         </image>
+      </ImageView>
+      <Pane fx:id="ModpackPane" layoutY="85.0" prefHeight="605.0" prefWidth="1300.0">
          <children>
             <Rectangle fx:id="startRect" fill="#3866b9" height="67.0" layoutX="192.0" layoutY="505.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="195.0" />
             <Rectangle fx:id="packSelectorPane" height="605.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" styleClass="borderMenuBackground" width="110.0" />
@@ -37,7 +42,7 @@
                   </Label>
                   <Label fx:id="PatchNotesContent" alignment="TOP_LEFT" contentDisplay="CENTER" layoutX="25.0" layoutY="87.0" prefHeight="209.0" prefWidth="577.0" styleClass="CardContent" text="- Patchnote" wrapText="true">
                      <font>
-                        <Font name="Arial Black" size="20.0" />
+                        <Font name="Arial Black" size="16.0" />
                      </font>
                   </Label>
                </children>

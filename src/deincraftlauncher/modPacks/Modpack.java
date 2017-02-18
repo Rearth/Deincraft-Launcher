@@ -78,7 +78,14 @@ public class Modpack {
         
         loadFromConfig();
         
-        //view = new ModpackView(this);
+        //view = new ModpackView(this);Timer timer = new Timer();
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                updateServerChecker();
+            }
+        }, 50);
         
         
     }
@@ -110,9 +117,9 @@ public class Modpack {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                updateServerChecker();
+                updateServerChecker(false);
             }
-        }, 100);
+        }, 50);
         
     }
     
@@ -483,9 +490,39 @@ public class Modpack {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    updateServerChecker();
+                    if (!WIP) {
+                        updateServerChecker();
+                    }
                 }
             }, 15000);
+        
+    }
+    
+    private void updateServerChecker(boolean goon) {
+        
+        if (serverIP == null || serverPort == 0) {
+            PackViewHandler.updateStats(this);
+            return;
+        }
+        
+        System.out.println("Starting server query");
+        try {
+            mcQuery = new MCQuery(serverIP, serverPort); //"46.4.75.39"; 25575
+            QueryResponse response = mcQuery.basicStat();
+            playersOnline = response.getOnlinePlayers();
+            maxPlayers = response.getMaxPlayers();
+            serverOnline = true;
+            System.out.println(response);
+        } catch (Exception ex) {
+            System.err.println("error contacting server");
+            playersOnline = 0;
+            maxPlayers = 0;
+            serverOnline = false;
+        }
+        
+        Platform.runLater(() -> {
+                PackViewHandler.updateStats(this);
+        });
         
     }
     

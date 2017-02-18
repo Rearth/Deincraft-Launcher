@@ -165,13 +165,13 @@ public class NewsHandler {
             
             Pane addTo = UI.ScrollPaneContent;
             
-            belongTo = new Label(elem.belonging);
+            belongTo = new Label(elem.belonging.toLowerCase());
             belongTo.setLayoutX(posX);
             belongTo.setLayoutY(posY);
             belongTo.setFont(DesignHelpers.getTextFont(belongToSize));
             belongTo.setTextFill(Color.rgb(201, 201, 201, 0.61));
             
-            title = new Label(elem.Title);
+            title = new Label(elem.Title.toLowerCase());
             title.setLayoutX(posX);
             title.setLayoutY(posY);
             title.setPrefSize(width, height);

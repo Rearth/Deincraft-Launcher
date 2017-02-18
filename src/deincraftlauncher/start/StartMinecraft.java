@@ -89,8 +89,11 @@ public class StartMinecraft {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    pack.setStartState(PackViewHandler.StartState.Loading);
-                    pack.setStartText("gestartet");
+                    Platform.runLater(() -> {
+                        System.out.println("minecraft started, changing start state");
+                        pack.setStartState(PackViewHandler.StartState.Loading);
+                        pack.setStartText("gestartet");
+                    });
                 }
             }, 8000);
             

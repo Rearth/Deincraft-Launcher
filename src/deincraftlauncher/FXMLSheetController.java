@@ -421,4 +421,9 @@ public class FXMLSheetController implements Initializable {
         //noStuff
     }
     
+    @FXML
+    public void handleOptionClick() {
+        settings.showWindow();
+    }
+    
 }

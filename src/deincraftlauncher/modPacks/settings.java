@@ -8,6 +8,7 @@ package deincraftlauncher.modPacks;
 import deincraftlauncher.Config;
 import deincraftlauncher.designElements.DesignHelpers;
 import deincraftlauncher.designElements.TextButton;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -166,14 +167,19 @@ public class settings implements Serializable {
         separator.setFill(blueColor);
         background.getChildren().add(separator);
         
+        TextButton cancel = new TextButton(cancelX, saveY, "cancel", Color.RED, background);
+        cancel.setOnClick((TextButton tile) -> {
+                handleCancel(dialog);
+            });
+        
         TextButton save = new TextButton(saveX, saveY, "Speichern", Color.GREEN, background);
         save.setOnClick((TextButton tile) -> {
                 handleSave(dialog);
             });
         
-        TextButton cancel = new TextButton(cancelX, saveY, "cancel", Color.RED, background);
-        cancel.setOnClick((TextButton tile) -> {
-                handleCancel(dialog);
+        TextButton openfolder = new TextButton(saveX - 20, separatorY + separatorSizeY + 3, "Open folder", Color.DARKCYAN, background);
+        openfolder.setOnClick((TextButton tile) -> {
+                handleOpen(dialog);
             });
         
         Label Title = new Label();
@@ -231,6 +237,14 @@ public class settings implements Serializable {
     private static void handleCancel(Stage stage) {
         System.out.println("cancelling settings");
         stage.close();
+    }
+    
+    private static void handleOpen(Stage stage) {
+        try {
+            Desktop.getDesktop().open(new File(Config.getGameFolder()));
+        } catch (IOException ex) {
+            Logger.getLogger(settings.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }
